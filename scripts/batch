@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+
+from argparse import ArgumentParser
+
+parser = ArgumentParser(usage="%prog [args] samplename1 samplename2 ...")
+parser.add_argument("-v","--verbose", action="store_true", dest="verbose",
+                  help="verbose", default=False)
+parser.add_argument('-n',"--nproc", type=int, dest="nproc",
+                  help="number of students (parallel processes)", default=1)
+parser.add_argument("--grl", type=str, dest="grl",
+                  help="good runs list", default=None)
+parser.add_argument("--events", type=int, dest="events",
+                  help="number of events to process", default=-1)
+parser.add_argument('-p',"--periods", type=str, dest="periods",
+                  help="data periods separated by commas or all period by default if not specified", default=None)
+parser.add_argument('-r',"--runs", type=str, dest="runs",
+                  help="data runs separated by commas (must not also specify periods)", default=None)
+parser.add_argument("--release", type=str, dest="release",
+                  help="ATLAS software release", default="16")
+parser.add_argument("--size", type=str, dest="size",
+                  help="use large or small D3PDs", default="large")
+parser.add_argument("--suffix", type=str, dest="suffix",
+                  help="suffix appended to sample name", default=None)
+parser.add_argument('-s',"--student", type=str, dest="student",
+                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+parser.add_argument('datasets', type=str, nargs="+")
+args, user_args = parser.parse_known_args()
+
+import sys
+import os
+import ROOT
+import glob
+from rootpy.batch import Supervisor
+from atlastools import datasets
+
+sys.path.insert(0,'.')
+
+if not args.student:
+    sys.exit("Student file not defined!")
+
+try:
+    print "importing %s..."% args.student
+    exec "from %s import %s"% (args.student, args.student)
+except Exception as ex:
+    print ex
+    sys.exit(1)
+
+if not os.environ.has_key('DATAROOT'):
+    sys.exit("$DATAROOT not defined!")
+dataroot = os.environ['DATAROOT']
+
+if len(args.datasets) == 0:
+    print "No samples specified!"
+    sys.exit(1)
+
+if len(args.datasets) == 1:
+    if args.datasets[0].lower() == 'all':
+        args = []
+        dirs = glob.glob(os.path.join(dataroot,'*'))
+        for dir in dirs:
+            print dir
+            if os.path.isfile(os.path.join(dir,'meta.yml')):
+                args.append(os.path.basename(dir))
+
+if args.runs != None and args.periods != None:
+    print "Warning: you specified both runs and data periods. Your run selection will override the periods selection"
+    args.periods = None
+
+if args.periods is not None:
+    print "using period(s) %s for data sample" % args.periods
+elif args.runs is not None:
+    print "using run(s) %s for data sample" % args.runs
+
+if args.runs != None:
+    if ',' in args.runs:
+        args.runs = [int(run) for run in args.runs.split(',')]
+    elif '-' in args.runs:
+        begin, end = args.runs.split('-')
+        args.runs = range(int(begin), int(end)+1)
+    else:
+        args.runs = [int(args.runs)]
+
+filesets = []
+for sample in args.datasets:
+    fileset = datasets.get_sample(sample,
+                                  periods = args.periods,
+                                  runs = args.runs)
+    if not fileset:
+        print "FATAL: sample %s does not exist!"%sample
+        sys.exit(1)
+    print "processing %s..."%fileset.name
+    filesets.append(fileset)
+
+for fileset in filesets:
+    supervisor = Supervisor(
+        name = args.student,
+        outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
+        fileset = fileset,
+        nstudents = args.nproc,
+        process = eval(args.student),
+        grl = args.grl,
+        events = args.events,
+        options = user_args)
+    supervisor.start()
+    supervisor.join()
