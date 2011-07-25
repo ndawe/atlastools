@@ -2,11 +2,7 @@ DEPENDENCIES:
 
 This package depends on rootpy which you will also need to install:
 
-From SourceForge:
-git clone git://rootpy.git.sourceforge.net/gitroot/rootpy/rootpy
-
-From the ATLAS SVN server:
-svn checkout svn+ssh://${USER}@svn.cern.ch/reps/atlasusr/end/rootpy/trunk rootpy
+git clone git://github.com/ndawe/rootpy.git
 
 INSTALL:
 
