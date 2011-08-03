@@ -3,9 +3,9 @@ from goodruns.grl import GRL
 
 class GRLFilter(EventFilter):
 
-    def __init__(self, grl = None):
+    def __init__(self, grl = None, **kwargs):
 
-        Filter.__init__(self)
+        super(GRLFilter, self).__init__(self, **kwargs)
         if isinstance(grl, GRL):
             self.grl = grl
         else:
