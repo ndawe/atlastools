@@ -6,7 +6,10 @@ class GRLFilter(EventFilter):
     def __init__(self, grl = None):
 
         Filter.__init__(self)
-        self.grl = GRL(grl)
+        if isinstance(grl, GRL):
+            self.grl = grl
+        else:
+            self.grl = GRL(grl)
 
     def passes(self, event):
 
