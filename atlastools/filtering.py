@@ -6,6 +6,7 @@ class GRLFilter(EventFilter):
     def __init__(self, grl, **kwargs):
 
         super(GRLFilter, self).__init__(**kwargs)
+        
         if isinstance(grl, GRL):
             self.grl = grl
         else:
