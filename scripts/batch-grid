@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+
+from argparse import ArgumentParser
+
+parser = ArgumentParser(usage="%prog [args] file1,file2,file3...")
+parser.add_argument("-v","--verbose", action="store_true", dest="verbose",
+                  help="verbose", default=False)
+parser.add_argument("--grl", type=str, dest="grl",
+                  help="good runs list", default=None)
+parser.add_argument("--events", type=int, dest="events",
+                  help="number of events to process", default=-1)
+parser.add_argument("--dataset", type=str, dest="dataset",
+                  help="name of dataset being processed", default=None)
+parser.add_argument("--metadata", type=str, dest="metadata",
+                  help="YAML file containing dataset definitions", default="datasets.yml")
+parser.add_argument('-s',"--student", type=str, dest="student",
+                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+parser.add_argument('files', type=str, nargs="1")
+args, user_args = parser.parse_known_args()
+
+import sys
+import os
+import ROOT
+import glob
+from rootpy.batch import Supervisor
+from atlastools import datasets
+from rootpy.data.dataset import Fileset
+import yaml
+
+sys.path.insert(0,'.')
+
+if not args.student:
+    sys.exit("Student file not specified!")
+
+if not args.dataset:
+    sys.exit("dataset name not specified!")
+
+if not args.metadata:
+    sys.exit("metadata file not specified!")
+
+try:
+    print "importing %s..."% args.student
+    exec "from %s import %s"% (args.student, args.student)
+except Exception as ex:
+    print ex
+    sys.exit(1)
+
+args.files = args.files.split(',')
+if len(args.files) == 0:
+    print "No input files specified!"
+    sys.exit(1)
+
+metafile = open(args.metadata)
+metadata = yaml.load(metafile)
+metafile.close()
+
+meta = metadata.get(args.dataset, None)
+if not meta:
+    sys.exit("dataset %s not defined in metadata!"% args.dataset)
+
+Fileset(
+    name = args.dataset,
+    title = meta["label"],
+    datatype = meta["type"],
+    classtype = meta["class"],
+    treename = meta["tree"],
+    weight = meta["weight"],
+    files = args.files,
+    meta = None,
+    properties = None
+)
+
+supervisor = Supervisor(
+    name = args.student,
+    outputname = args.dataset,
+    fileset = fileset,
+    nstudents = 1,
+    process = eval(args.student),
+    gridmode = True,
+    grl = args.grl,
+    events = args.events,
+    options = user_args)
+supervisor.start()
+supervisor.join()
