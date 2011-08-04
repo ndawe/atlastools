@@ -15,7 +15,7 @@ parser.add_argument("--metadata", type=str, dest="metadata",
                   help="YAML file containing dataset definitions", default="datasets.yml")
 parser.add_argument('-s',"--student", type=str, dest="student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
-parser.add_argument('files', type=str, nargs="1")
+parser.add_argument('files', type=str, nargs="?")
 args, user_args = parser.parse_known_args()
 
 import sys
@@ -50,6 +50,10 @@ if len(args.files) == 0:
     print "No input files specified!"
     sys.exit(1)
 
+print "will run on these files:"
+for file in args.files:
+    print file
+
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
 metafile.close()
@@ -58,7 +62,7 @@ meta = metadata.get(args.dataset, None)
 if not meta:
     sys.exit("dataset %s not defined in metadata!"% args.dataset)
 
-Fileset(
+fileset = Fileset(
     name = args.dataset,
     title = meta["label"],
     datatype = meta["type"],
@@ -69,6 +73,9 @@ Fileset(
     meta = None,
     properties = None
 )
+
+if args.grl is None and meta.has_key("grl"):
+    args.grl = meta["grl"]
 
 supervisor = Supervisor(
     name = args.student,

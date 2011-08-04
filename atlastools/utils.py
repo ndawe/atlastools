@@ -15,3 +15,7 @@ def et2pt(et, eta, m):
 def pt2et(pt, eta, m):
 
     return math.sqrt(pt**2 + (m**2)/(math.cosh(eta)**2))
+
+def Mvis(et1, phi1, et2, phi2):
+
+    return math.sqrt(2. * et1 * et2 * (1. - math.cos(dphi(phi1, phi2))))
