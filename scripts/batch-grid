@@ -50,10 +50,6 @@ if len(args.files) == 0:
     print "No input files specified!"
     sys.exit(1)
 
-print "will run on these files:"
-for file in args.files:
-    print file
-
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
 metafile.close()
