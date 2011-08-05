@@ -4,7 +4,7 @@ import re
 
 _RUNFILEPATTERN = re.compile('^(?P<project>[^.]+).(?P<period>[^.]+).runs.list$')
 _PERIODPATTERN = re.compile('^period(?P<period>[A-Z])(?P<subperiod>[0-9]+)$')
-_runfiles = glob.glob(os.path.join(os.environ['ATLASTOOLS_SYS'], 'dat', '*'))
+_runfiles = glob.glob(os.path.join(os.getenv('ATLASTOOLS_SYS','.'), 'dat', '*'))
 _runperiods = {}
 
 for f in _runfiles:
