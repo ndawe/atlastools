@@ -1,5 +1,5 @@
 from rootpy.tree.filtering import EventFilter
-from goodruns.grl import GRL
+from goodruns import GRL
 
 class GRLFilter(EventFilter):
 
