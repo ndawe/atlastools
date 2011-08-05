@@ -31,9 +31,7 @@ labels = {
     'JET' : JET
 }
 
-if not os.environ.has_key('DATAROOT'):
-    sys.exit("DATAROOT not defined!")
-dataroot = os.environ['DATAROOT']
+dataroot = os.getenv('DATAROOT','.')
 
 def get_sample(name, runs = None, periods = None):
 
