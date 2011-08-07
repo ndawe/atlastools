@@ -6,8 +6,8 @@ import sys
 import os
 import commands
 
-DISPLAY = os.environ["DISPLAY"]
-PATH = os.path.join(os.environ["ROOTPY_CONFIG_ROOT"], 'env')
+DISPLAY = os.getenv("DISPLAY",'')
+PATH = os.path.join(os.getenv("ATLASTOOLS_CONFIG_ROOT","HOME"), 'env')
 
 def define(name):
     """
