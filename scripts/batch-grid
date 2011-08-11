@@ -46,7 +46,7 @@ except Exception as ex:
     sys.exit(1)
 
 if os.path.isdir(args.files):
-    args.files = glob.glob(os.path.join(args.files, "*.root"))
+    args.files = glob.glob(os.path.join(args.files, "*.root*"))
 else:
     args.files = args.files.split(',')
 if len(args.files) == 0:
