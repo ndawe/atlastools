@@ -45,7 +45,10 @@ except Exception as ex:
     print ex
     sys.exit(1)
 
-args.files = args.files.split(',')
+if os.path.isdir(args.files):
+    args.files = glob.glob(os.path.join(args.files, "*.root"))
+else:
+    args.files = args.files.split(',')
 if len(args.files) == 0:
     print "No input files specified!"
     sys.exit(1)
