@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+
+from argparse import ArgumentParser
+
+parser = ArgumentParser(usage="%prog [args] samplename1 samplename2 ...")
+parser.add_argument('-m',"--meta", type=str, dest="metadata",
+                  help="", default="datasets.yml")
+parser.add_argument("--version", type=int, dest="version",
+                  help="version number appended to output dataset name", default=1)
+parser.add_argument('-s',"--student", type=str, dest="student",
+                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+parser.add_argument('datasets', type=str, nargs="+")
+args, user_args = parser.parse_known_args()
+
+import yaml
+from subprocess import call
+
+metafile = open(args.metadata)
+metadata = yaml.load(metafile)
+metafile.close()
+
+for dataset in args.datasets:
+    panda_bexec = "source setup.sh"
+    panda_exec = 'source setup.sh; batch-grid --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
+    panda_inDS = metadata[dataset]["container"]
+    panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
+    panda_outputs = "%s.root,cutflow.p" % dataset 
+    panda_opts = "--nGBPerJob=8 --excludeFile .git"
+    call(["prun",
+          "--bexec" % panda_bexec,
+          "--exec" % panda_exec,
+          "--inDS" % panda_inDS,
+          "--outDS" % panda_outDS,
+          "--outputs" % panda_outputs,
+          panda_opts])
