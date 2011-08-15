@@ -13,6 +13,7 @@ parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
 import yaml
+import sys
 from subprocess import call
 
 metafile = open(args.metadata)
@@ -20,9 +21,11 @@ metadata = yaml.load(metafile)
 metafile.close()
 
 for dataset in args.datasets:
+    if not dataset in metadata:
+        sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
+    panda_inDS = metadata[dataset]["container"]
     panda_bexec = "source setup.sh"
     panda_exec = 'source setup.sh; batch-grid --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
-    panda_inDS = metadata[dataset]["container"]
     panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
     panda_outputs = "%s.root,cutflow.p" % dataset 
     panda_opts = "--nGBPerJob=8 --excludeFile .git"
