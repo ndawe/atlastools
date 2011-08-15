@@ -30,9 +30,9 @@ for dataset in args.datasets:
     panda_outputs = "%s.root,cutflow.p" % dataset 
     panda_opts = "--nGBPerJob=8 --excludeFile .git"
     call(["prun",
-          "--bexec %s" % panda_bexec,
-          "--exec %s" % panda_exec,
-          "--inDS %s" % panda_inDS,
-          "--outDS %s" % panda_outDS,
-          "--outputs %s" % panda_outputs,
+          "--bexec=\"%s\"" % panda_bexec,
+          "--exec=\"%s\"" % panda_exec,
+          "--inDS=%s" % panda_inDS,
+          "--outDS=%s" % panda_outDS,
+          "--outputs=%s" % panda_outputs,
           panda_opts])
