@@ -38,6 +38,8 @@ for dataset in args.datasets:
         "--outputs=%s" % panda_outputs,
         panda_opts
     ] 
-    if "site" in metadata:
-        command.append("--site %s" % metadata["site"])
+    if "site" in metadata[dataset]:
+        command.append("--site %s" % metadata[dataset]["site"])
+    print "executing:"
+    print " ".join(command)
     call(command)
