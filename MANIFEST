@@ -53,12 +53,9 @@ dat/data10_hi.periodJ6.runs.list
 dat/data10_hi.periodJ7.runs.list
 scripts/amalgamate
 scripts/batch
-scripts/batch-grid
-scripts/batch-untar
-scripts/dumpmc
-scripts/dumpreal
 scripts/envpickle
-scripts/grid-unpack
+scripts/grid-batch
+scripts/grid-submit
 scripts/meta-update
 scripts/run
 templates/atlastools_setup.csh.template

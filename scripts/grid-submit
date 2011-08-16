@@ -25,7 +25,7 @@ for dataset in args.datasets:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
     panda_inDS = metadata[dataset]["container"]
     panda_bexec = "source setup.sh"
-    panda_exec = 'source setup.sh; batch-grid --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
+    panda_exec = 'source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
     panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
     panda_outputs = "%s.root,cutflow.p" % dataset 
     panda_opts = "--nGBPerJob=8 --excludeFile .git"
