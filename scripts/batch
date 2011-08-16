@@ -23,6 +23,8 @@ parser.add_argument("--suffix", type=str, dest="suffix",
                   help="suffix appended to sample name", default=None)
 parser.add_argument('-s',"--student", type=str, dest="student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+parser.add_argument('-m',"--meta", type=str, dest="metadata",
+                  help="dataset metadata in YAML format", default="datasets.yml")
 parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -30,6 +32,7 @@ import sys
 import os
 import ROOT
 import glob
+import yaml
 from rootpy.batch import Supervisor
 from atlastools import datasets
 
@@ -45,9 +48,9 @@ except Exception as ex:
     print ex
     sys.exit(1)
 
-if not os.environ.has_key('DATAROOT'):
+dataroot = os.getenv('DATAROOT', None)
+if dataroot is None:
     sys.exit("$DATAROOT not defined!")
-dataroot = os.environ['DATAROOT']
 
 if len(args.datasets) == 0:
     print "No samples specified!"
@@ -80,9 +83,15 @@ if args.runs != None:
     else:
         args.runs = [int(args.runs)]
 
+metafile = open(args.metadata)
+metadata = yaml.load(metafile)
+metafile.close()
+
 filesets = []
 for sample in args.datasets:
-    fileset = datasets.get_sample(sample,
+    if not sample in metadata:
+        sys.exit("sample %s not defined in metadata %s" % (sample, args.metadata))
+    fileset = datasets.get_sample(metadata[sample],
                                   periods = args.periods,
                                   runs = args.runs)
     if not fileset:

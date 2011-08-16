@@ -3,6 +3,7 @@ import os
 import sys
 import re
 import yaml
+import fnmatch
 from atlastools import runperiods
 from rootpy.data.dataset import Fileset
 
@@ -33,12 +34,16 @@ labels = {
 
 dataroot = os.getenv('DATAROOT','.')
 
-def get_sample(name, runs = None, periods = None):
+def get_sample(metadata, runs = None, periods = None):
 
-    base = os.path.join(dataroot,name)
+    path = [dataroot, metadata["container"]]
+    if "local" in metadata:
+        path.insert(1, metadata["local"])
+    base = os.path.join(path)
     if not os.path.isdir(base):
-        print "Sample %s not found at %s"%(name,base)
+        print "Sample %s not found at %s" % (name, base)
         return None
+    """
     metafile = os.path.join(base,'meta.yml')
     if not os.path.isfile(metafile):
         print "Metadata %s not found!"%metafile
@@ -58,6 +63,16 @@ def get_sample(name, runs = None, periods = None):
     except:
         print "Could not parse metadata!"
         return None 
+    """
+
+    datatype = metadata.get('type')
+    classtype = metadata.get('class')
+    treename = metadata.get('tree')
+    labelname = metadata.get('label')
+    weight = metadata.get('weight')
+    if type(weight) is str:
+        weight = float(eval(weight))
+    
     if not classes.has_key(classname):
         print "Class %s is not defined!"%classname
         if len(classes) > 0:
@@ -86,6 +101,13 @@ def get_sample(name, runs = None, periods = None):
         else:
             print "No labels have been defined!"
     labeltype = labels[labelname]
+
+    files = []
+    for root, dirnames, filenames in os.walk(base):
+        for filename in fnmatch.filter(filenames, '*.root*'):
+            files.append(os.path.join(root, filename))
+
+    """
     dirs = glob.glob(os.path.join(base,'*'))
     actualdirs = []
     for dir in dirs:
@@ -114,7 +136,7 @@ def get_sample(name, runs = None, periods = None):
                 if selected_runs:
                     if runnumber not in selected_runs:
                         continue
-                """
+                ///
                 edition = 0
                 if match.group('edition'):
                     edition = int(match.group('edition'))
@@ -124,24 +146,25 @@ def get_sample(name, runs = None, periods = None):
                         runnumbers[runnumber] = {'edition':edition, 'dir':dir}
                 else:
                     runnumbers[runnumber] = {'edition':edition, 'dir':dir}
-                """
+                ///
                 files += glob.glob(os.path.join(dir,'*root*'))
-        """
+        ///
         if len(versions) > 1:
             print "Warning: multiple versions of TauD3PDMaker used:"
             for key in versions.keys():
                 print key
-        """
+        ///
     else:
         for dir in actualdirs:
             #datasetname = os.path.basename(dir)
             #match = re.match(mcpattern,datasetname)
-            """
+            ///
             if not match:
                 print "Warning: directory %s is not a valid dataset name!"%datasetname
             else:
-            """
+            ///
             files += glob.glob(os.path.join(dir,'*root*'))
+    """
     return Fileset(
             name = samplename,
             title = labeltype,
