@@ -91,7 +91,8 @@ filesets = []
 for sample in args.datasets:
     if not sample in metadata:
         sys.exit("sample %s not defined in metadata %s" % (sample, args.metadata))
-    fileset = datasets.get_sample(metadata[sample],
+    fileset = datasets.get_sample(sample,
+                                  metadata[sample],
                                   periods = args.periods,
                                   runs = args.runs)
     if not fileset:

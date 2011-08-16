@@ -34,13 +34,12 @@ labels = {
 
 dataroot = os.getenv('DATAROOT','.')
 
-def get_sample(metadata, runs = None, periods = None):
+def get_sample(name, metadata, runs = None, periods = None):
 
     if "local" in metadata:
-        path = [dataroot, metadata["local"]]
+        base = os.path.join(dataroot, metadata["local"])
     else:
-        path = [dataroot, metadata["container"]]
-    base = os.path.join(path)
+        base = os.path.join(dataroot, metadata["container"])
     if not os.path.isdir(base):
         print "Sample %s not found at %s" % (name, base)
         return None
@@ -67,7 +66,7 @@ def get_sample(metadata, runs = None, periods = None):
     """
 
     datatype = metadata.get('type')
-    classtype = metadata.get('class')
+    classname = metadata.get('class')
     treename = metadata.get('tree')
     labelname = metadata.get('label')
     weight = metadata.get('weight')
@@ -167,7 +166,7 @@ def get_sample(metadata, runs = None, periods = None):
             files += glob.glob(os.path.join(dir,'*root*'))
     """
     return Fileset(
-            name = samplename,
+            name = name,
             title = labeltype,
             datatype = datatype,
             classtype = classtype,
