@@ -36,9 +36,10 @@ dataroot = os.getenv('DATAROOT','.')
 
 def get_sample(metadata, runs = None, periods = None):
 
-    path = [dataroot, metadata["container"]]
     if "local" in metadata:
-        path.insert(1, metadata["local"])
+        path = [dataroot, metadata["local"]]
+    else:
+        path = [dataroot, metadata["container"]]
     base = os.path.join(path)
     if not os.path.isdir(base):
         print "Sample %s not found at %s" % (name, base)
