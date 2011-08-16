@@ -11,6 +11,7 @@ def getstyle():
     atlasStyle.SetCanvasBorderMode(icol)
     atlasStyle.SetCanvasColor(icol)
     atlasStyle.SetPadBorderMode(icol)
+    atlasStyle.SetLegendBorderSize(icol)
     atlasStyle.SetPadColor(icol)
     atlasStyle.SetStatColor(icol)
     #atlasStyle.SetFillColor(icol) // don't use: white fill color for *all* objects
