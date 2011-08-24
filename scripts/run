@@ -14,4 +14,7 @@ if args.env != "":
     if not status:
         sys.exit(1)
 
+if len(user_args) == 1:
+    user_args = user_args[0].split()
+
 call(user_args)
