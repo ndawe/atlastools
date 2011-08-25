@@ -42,7 +42,4 @@ def load(name):
     new_python = subprocess.check_output(["which", "python"])
     sys.path = new_env["Python"]
     print "Environment %s has been loaded."% name
-    if new_python != current_python:
-        print "Warning! This environment uses a different version of Python."
-        return new_python
     return True
