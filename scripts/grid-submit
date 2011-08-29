@@ -23,22 +23,28 @@ metafile.close()
 for dataset in args.datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
-    panda_inDS = metadata[dataset]["container"]
-    panda_bexec = "source setup.sh"
-    panda_exec = 'source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
-    panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
-    panda_outputs = "%s.root,cutflow.p" % dataset 
-    panda_opts = ["--nGBPerJob=8", "--excludeFile=.git", "--extFile=*.so"]
-    command = [
-        "prun",
-        "--bexec=\"%s\"" % panda_bexec,
-        "--exec=\"%s\"" % panda_exec,
-        "--inDS=%s" % panda_inDS,
-        "--outDS=%s" % panda_outDS,
-        "--outputs=%s" % panda_outputs
-    ] + panda_opts
-    if "site" in metadata[dataset]:
-        command.append("--site=%s" % metadata[dataset]["site"])
-    print "executing:"
-    print " ".join(command)
-    call(command)
+    inDS = metadata[dataset]["container"]
+    if not type(inDS) is list:
+        inDS = [inDS]
+    for panda_inDS in inDS:
+        panda_site = None
+        if ':' in panda_inDS:
+            panda_inDS, panda_site = panda_inDS.split(':') 
+        panda_bexec = "source setup.sh"
+        panda_exec = 'source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
+        panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
+        panda_outputs = "%s.root,cutflow.p" % dataset 
+        panda_opts = ["--nGBPerJob=8", "--excludeFile=.git", "--extFile=*.so"]
+        command = [
+            "prun",
+            "--bexec=\"%s\"" % panda_bexec,
+            "--exec=\"%s\"" % panda_exec,
+            "--inDS=%s" % panda_inDS,
+            "--outDS=%s" % panda_outDS,
+            "--outputs=%s" % panda_outputs
+        ] + panda_opts
+        if not panda_site is None:
+            command.append("--site=%s" % panda_site)
+        print "executing:"
+        print " ".join(command)
+        call(command)
