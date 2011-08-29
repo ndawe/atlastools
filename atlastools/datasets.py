@@ -37,7 +37,10 @@ dataroot = os.getenv('DATAROOT','.')
 def get_sample(name, metadata, runs = None, periods = None):
 
     if "local" in metadata:
-        base = os.path.join(dataroot, metadata["local"])
+        if os.path.isdir(metadata["local"]):
+            base = metadata["local"]
+        else:
+            base = os.path.join(dataroot, metadata["local"])
     else:
         base = os.path.join(dataroot, metadata["container"])
     if not os.path.isdir(base):
