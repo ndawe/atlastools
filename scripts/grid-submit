@@ -7,6 +7,8 @@ parser.add_argument('-m',"--meta", type=str, dest="metadata",
                   help="", default="datasets.yml")
 parser.add_argument("--version", type=int, dest="version",
                   help="version number appended to output dataset name", default=1)
+parser.add_argument("--extFile", type=str, dest="extfile",
+                  help="extra files to send to worker nodes", default=None)
 parser.add_argument('-s',"--student", type=str, dest="student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
 parser.add_argument('datasets', type=str, nargs="+")
@@ -34,7 +36,10 @@ for dataset in args.datasets:
         panda_exec = 'source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN' % (dataset, args.metadata, args.student)
         panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
         panda_outputs = "%s.root,cutflow.p" % dataset 
-        panda_opts = ["--nGBPerJob=8", "--excludeFile=.git", "--extFile=*.so"]
+        panda_extFiles = "*.so"
+        if not args.extfile is None:
+            panda_extFiles = ",".join([panda_extFiles, args.extfile])
+        panda_opts = ["--nGBPerJob=8", "--excludeFile=.*", "--extFile=%s" % panda_extFiles]
         command = [
             "prun",
             "--bexec=\"%s\"" % panda_bexec,
