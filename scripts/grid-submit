@@ -32,7 +32,7 @@ for dataset in args.datasets:
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
-        panda_bexec = "./setup.sh"
+        panda_bexec = "setup.sh"
         panda_exec = "source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
         panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
         panda_outputs = "%s.root,cutflow.p" % dataset 
