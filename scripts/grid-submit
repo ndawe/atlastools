@@ -42,8 +42,8 @@ for dataset in args.datasets:
         panda_opts = ["--nGBPerJob=8", "--excludeFile=.git", "--extFile=%s" % panda_extFiles]
         command = [
             "prun",
-            "--bexec=\"%s\"" % panda_bexec,
-            "--exec=\"%s\"" % panda_exec,
+            "--bexec=\'%s\'" % panda_bexec,
+            "--exec=\'%s\'" % panda_exec,
             "--inDS=%s" % panda_inDS,
             "--outDS=%s" % panda_outDS,
             "--outputs=%s" % panda_outputs
