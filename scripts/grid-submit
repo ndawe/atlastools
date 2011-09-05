@@ -12,7 +12,7 @@ parser.add_argument("--extFile", type=str, dest="extfile",
 parser.add_argument('-s',"--student", type=str, dest="student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
 parser.add_argument('-u',"--user", type=str, dest="user",
-                  help="your grid dataset username i.e. JohnDoe", default=None)
+                  help="your grid dataset username i.e. JohnDoe", required=True)
 parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -23,9 +23,6 @@ from subprocess import call
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
 metafile.close()
-
-if args.user is None:
-    sys.exit("You must specify your grid username with -u or --user")
 
 for dataset in args.datasets:
     if not dataset in metadata:
@@ -38,23 +35,23 @@ for dataset in args.datasets:
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
         panda_bexec = "setup.sh"
-        panda_exec = "/bin/bash -c \"source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN\"" % (dataset, args.metadata, args.student)
-        panda_outDS = "user.%s.%s.%s.v%i" % (args.student, args.user, dataset, args.version)
+        panda_exec = "source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
+        panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
         panda_outputs = "%s.root,cutflow.p" % dataset 
         panda_extFiles = "*.so"
         if not args.extfile is None:
             panda_extFiles = ",".join([panda_extFiles, args.extfile])
-        panda_opts = ["--nGBPerJob=8", "--excludeFile=.git", "--extFile=%s" % panda_extFiles]
+        panda_opts = ["--nGBPerJob 8", "--excludeFile .git", "--extFile %s" % panda_extFiles]
         command = [
             "prun",
-            "--bexec=\'%s\'" % panda_bexec,
-            "--exec=\'%s\'" % panda_exec,
-            "--inDS=%s" % panda_inDS,
-            "--outDS=%s" % panda_outDS,
-            "--outputs=%s" % panda_outputs
+            "--bexec \"%s\"" % panda_bexec,
+            "--exec \"%s\"" % panda_exec,
+            "--inDS %s" % panda_inDS,
+            "--outDS %s" % panda_outDS,
+            "--outputs %s" % panda_outputs
         ] + panda_opts
         if not panda_site is None and "--site" not in user_args:
-            command.append("--site=%s" % panda_site)
+            command.append("--site %s" % panda_site)
         command = " ".join(command)
         if user_args:
             command += " %s" % user_args
