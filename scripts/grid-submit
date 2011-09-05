@@ -11,6 +11,8 @@ parser.add_argument("--extFile", type=str, dest="extfile",
                   help="extra files to send to worker nodes", default=None)
 parser.add_argument('-s',"--student", type=str, dest="student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+parser.add_argument('-u',"--user", type=str, dest="user",
+                  help="your grid dataset username i.e. JohnDoe", default=None)
 parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -21,6 +23,9 @@ from subprocess import call
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
 metafile.close()
+
+if args.user is None:
+    sys.exit("You must specify your grid username with -u or --user")
 
 for dataset in args.datasets:
     if not dataset in metadata:
@@ -33,8 +38,8 @@ for dataset in args.datasets:
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
         panda_bexec = "setup.sh"
-        panda_exec = "source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
-        panda_outDS = "user.NoelDawe.%s.%s.v%i" % (args.student, dataset, args.version)
+        panda_exec = "/bin/bash -c \"source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN\"" % (dataset, args.metadata, args.student)
+        panda_outDS = "user.%s.%s.%s.v%i" % (args.student, args.user, dataset, args.version)
         panda_outputs = "%s.root,cutflow.p" % dataset 
         panda_extFiles = "*.so"
         if not args.extfile is None:
