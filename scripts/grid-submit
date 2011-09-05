@@ -53,8 +53,11 @@ for dataset in args.datasets:
             "--outDS=%s" % panda_outDS,
             "--outputs=%s" % panda_outputs
         ] + panda_opts
-        if not panda_site is None:
+        if not panda_site is None and "--site" not in user_args:
             command.append("--site=%s" % panda_site)
+        command = " ".join(command)
+        if user_args:
+            command += " %s" % user_args
         print "executing:"
-        print " ".join(command)
-        call(command)
+        print command
+        call(command, shell=True)
