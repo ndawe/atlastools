@@ -14,6 +14,7 @@ atlastools/runperiods.py
 atlastools/style.py
 atlastools/units.py
 atlastools/utils.py
+dat/README
 dat/runperiods.tar.gz
 scripts/amalgamate
 scripts/batch
