@@ -111,5 +111,9 @@ for fileset in filesets:
         grl = args.grl,
         events = args.events,
         options = user_args)
-    supervisor.start()
-    supervisor.join()
+    try:
+        supervisor.start()
+        supervisor.join()
+    except KeyboardInterrupt, SystemExit:
+        supervisor.terminate()
+        break
