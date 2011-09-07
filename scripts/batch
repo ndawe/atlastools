@@ -35,6 +35,7 @@ import glob
 import yaml
 from rootpy.batch import Supervisor
 from atlastools import datasets
+import multiprocessing
 
 sys.path.insert(0,'.')
 
@@ -108,6 +109,7 @@ for fileset in filesets:
         fileset = fileset,
         nstudents = args.nproc,
         process = eval(args.student),
+        connect_queue = multiprocessing.Queue(-1)
         grl = args.grl,
         events = args.events,
         options = user_args)
@@ -115,6 +117,7 @@ for fileset in filesets:
         supervisor.start()
         supervisor.join()
     except KeyboardInterrupt, SystemExit:
-        print "batch caught interrupt"
-        supervisor.terminate()
+        print "Cleaning up..."
+        supervisor.connect_queue.put(None)
+        supervisor.join()
         break
