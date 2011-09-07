@@ -86,5 +86,9 @@ supervisor = Supervisor(
     grl = args.grl,
     events = args.events,
     options = user_args)
-supervisor.start()
-supervisor.join()
+try:
+    supervisor.start()
+    supervisor.join()
+except KeyboardInterrupt, SystemExit:
+    print "batch caught interrupt"
+    supervisor.terminate()
