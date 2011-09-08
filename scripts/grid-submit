@@ -27,15 +27,17 @@ metafile = open(args.metadata)
 metadata = yaml.load(metafile)
 metafile.close()
 
+sorted_datasets = sorted(metadata.keys())
+
 # expand globs
 datasets = []
 for dataset in args.datasets:
     if '*' in dataset:
-        datasets += fnmatch.filter(metadata.keys(), dataset)
+        datasets += fnmatch.filter(sorted_datasets, dataset)
     else:
         datasets.append(dataset)
 
-for dataset in sorted(datasets):
+for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
     inDS = metadata[dataset]["container"]
