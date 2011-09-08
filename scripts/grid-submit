@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 parser = ArgumentParser(usage="%(prog)s [args] samplename1 samplename2 ...")
 parser.add_argument('-m',"--meta", type=str, dest="metadata",
                   help="", default="datasets.yml")
-parser.add_argument("--version", type=int, dest="version",
+parser.add_argument('-v', "--version", type=int, dest="version",
                   help="version number appended to output dataset name", default=1)
 parser.add_argument("--extFile", type=str, dest="extfile",
                   help="extra files to send to worker nodes", default=None)
