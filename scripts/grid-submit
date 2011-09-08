@@ -15,6 +15,8 @@ parser.add_argument('-u',"--user", type=str, dest="user",
                   help="your grid dataset username i.e. JohnDoe", required=True)
 parser.add_argument("--nosite", action='store_true',
                   help="override site in metadata and let the grid decide")
+parser.add_argument('-g', "--get", action='store_true',
+                  help="download datasets")
 parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -44,12 +46,15 @@ for dataset in datasets:
     if not type(inDS) is list:
         inDS = [inDS]
     for panda_inDS in inDS:
+        panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
+        if args.get:
+            call("run -e grid dq2-get %s" % panda_outDS, shell=True)
+            continue
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
         panda_bexec = "setup.sh"
         panda_exec = "source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
-        panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
         panda_outputs = "%s.root,cutflow.p" % dataset 
         panda_extFiles = "*.so"
         if not args.extfile is None:
