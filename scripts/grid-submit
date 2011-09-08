@@ -19,12 +19,21 @@ args, user_args = parser.parse_known_args()
 import yaml
 import sys
 from subprocess import call
+import fnmatch
 
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
 metafile.close()
 
+# expand globs
+datasets = []
 for dataset in args.datasets:
+    if '*' in dataset:
+        datasets += fnmatch.filter(metadata.keys(), dataset)
+    else:
+        datasets.append(dataset)
+
+for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
     inDS = metadata[dataset]["container"]
