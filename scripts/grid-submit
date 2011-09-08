@@ -13,6 +13,8 @@ parser.add_argument('-s',"--student", type=str, dest="student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
 parser.add_argument('-u',"--user", type=str, dest="user",
                   help="your grid dataset username i.e. JohnDoe", required=True)
+parser.add_argument("--nosite", action='store_true',
+                  help="override site in metadata and let the grid decide")
 parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -59,7 +61,7 @@ for dataset in datasets:
             "--outDS %s" % panda_outDS,
             "--outputs %s" % panda_outputs
         ] + panda_opts
-        if not panda_site is None and "--site" not in user_args:
+        if not panda_site is None and "--site" not in user_args and not args.nosite:
             command.append("--site %s" % panda_site)
         command = " ".join(command)
         if user_args:
