@@ -31,11 +31,11 @@ metafile.close()
 datasets = []
 for dataset in args.datasets:
     if '*' in dataset:
-        datasets += fnmatch.filter(sorted(metadata.keys()), dataset)
+        datasets += fnmatch.filter(metadata.keys(), dataset)
     else:
         datasets.append(dataset)
 
-for dataset in datasets:
+for dataset in sorted(datasets):
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
     inDS = metadata[dataset]["container"]
@@ -52,7 +52,7 @@ for dataset in datasets:
         panda_extFiles = "*.so"
         if not args.extfile is None:
             panda_extFiles = ",".join([panda_extFiles, args.extfile])
-        panda_opts = ["--nGBPerJob 8", "--excludeFile .git", "--extFile %s" % panda_extFiles]
+        panda_opts = ["--excludeFile .git", "--extFile %s" % panda_extFiles] # "--nGBPerJob 8"
         command = [
             "prun",
             "--bexec \"%s\"" % panda_bexec,
