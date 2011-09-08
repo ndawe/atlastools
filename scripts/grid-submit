@@ -29,7 +29,7 @@ metafile.close()
 datasets = []
 for dataset in args.datasets:
     if '*' in dataset:
-        datasets += fnmatch.filter(metadata.keys(), dataset)
+        datasets += fnmatch.filter(sorted(metadata.keys()), dataset)
     else:
         datasets.append(dataset)
 
