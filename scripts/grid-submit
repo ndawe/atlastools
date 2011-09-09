@@ -10,13 +10,14 @@ parser.add_argument('-v', "--version", type=int, dest="version",
 parser.add_argument("--extFile", type=str, dest="extfile",
                   help="extra files to send to worker nodes", default=None)
 parser.add_argument('-s',"--student", type=str, dest="student",
-                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", required=True)
 parser.add_argument('-u',"--user", type=str, dest="user",
                   help="your grid dataset username i.e. JohnDoe", required=True)
 parser.add_argument("--nosite", action='store_true',
                   help="override site in metadata and let the grid decide")
 parser.add_argument('-g', "--get", action='store_true',
                   help="download datasets")
+parser.add_argument('-d', '--dest', type=str, default='.', help="directory in which to download the datasets")
 parser.add_argument('datasets', type=str, nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -24,6 +25,7 @@ import yaml
 import sys
 from subprocess import call
 import fnmatch
+import os
 
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
@@ -48,7 +50,9 @@ for dataset in datasets:
     for panda_inDS in inDS:
         panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
         if args.get:
-            call("run -e grid dq2-get %s" % panda_outDS, shell=True)
+            if not os.path.isdir(args.dest):
+                sys.exit("destination path %s does not exist" % args.dest)
+            call("cd %s; run -e grid dq2-get %s/; cd -" % (args.dest, panda_outDS), shell=True)
             continue
         panda_site = None
         if ':' in panda_inDS:
