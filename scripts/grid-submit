@@ -72,7 +72,7 @@ for dataset in datasets:
             command.append("--site %s" % panda_site)
         command = " ".join(command)
         if user_args:
-            command += " %s" % user_args
+            command += " %s" % ' '.join(user_args)
         print "executing:"
         print command
         call(command, shell=True)
