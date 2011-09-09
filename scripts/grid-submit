@@ -52,7 +52,7 @@ for dataset in datasets:
         if args.get:
             if not os.path.isdir(args.dest):
                 sys.exit("destination path %s does not exist" % args.dest)
-            call("cd %s; run -e grid dq2-get %s/; cd -" % (args.dest, panda_outDS), shell=True)
+            call("cd %s; run -e grid dq2-get -T 3,8 %s/; cd -" % (args.dest, panda_outDS), shell=True)
             continue
         panda_site = None
         if ':' in panda_inDS:
