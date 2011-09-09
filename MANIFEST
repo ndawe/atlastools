@@ -23,5 +23,3 @@ scripts/grid-batch
 scripts/grid-submit
 scripts/meta-update
 scripts/run
-templates/atlastools_setup.csh.template
-templates/atlastools_setup.sh.template
