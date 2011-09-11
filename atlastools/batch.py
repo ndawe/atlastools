@@ -1,4 +1,4 @@
-from .. import datasets
+from . import datasets
 from rootpy.batch import Student, Supervisor
 
 class ATLASSupervisor(Supervisor):

@@ -22,7 +22,7 @@ import sys
 import os
 import ROOT
 import glob
-from atlastools import ATLASSupervisor
+from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
 from rootpy.data.dataset import Fileset
 import multiprocessing
