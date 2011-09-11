@@ -22,7 +22,7 @@ import sys
 import os
 import ROOT
 import glob
-from rootpy.batch import Supervisor
+from atlastools import ATLASSupervisor
 from atlastools import datasets
 from rootpy.data.dataset import Fileset
 import multiprocessing
@@ -77,7 +77,7 @@ fileset = Fileset(
 if args.grl is None and meta.has_key("grl"):
     args.grl = meta["grl"]
 
-supervisor = Supervisor(
+supervisor = ATLASSupervisor(
     name = args.student,
     outputname = args.dataset,
     fileset = fileset,

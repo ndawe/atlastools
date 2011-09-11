@@ -33,7 +33,7 @@ import os
 import ROOT
 import glob
 import yaml
-from rootpy.batch import Supervisor
+from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
 import multiprocessing
 
@@ -103,7 +103,7 @@ for sample in args.datasets:
     filesets.append(fileset)
 
 for fileset in filesets:
-    supervisor = Supervisor(
+    supervisor = ATLASSupervisor(
         name = args.student,
         outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
         fileset = fileset,
