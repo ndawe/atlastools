@@ -19,6 +19,7 @@ dat/runperiods.tar.gz
 scripts/amalgamate
 scripts/batch
 scripts/envpickle
+scripts/get-runs
 scripts/grid-batch
 scripts/grid-submit
 scripts/meta-update
