@@ -13,5 +13,6 @@ class ATLASStudent(Student):
 
         super(ATLASStudent, self).__init__(*args, **kwargs)
         self.grl = kwargs.get('grl', None)
+        self.events = kwargs.get('events', -1)
         if self.grl:
             print "Using GRL: %s"% self.grl
