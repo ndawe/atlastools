@@ -10,9 +10,10 @@ args = parser.parse_args()
 
 if args.importmod is not None:
     import os
-    name = os.path.splitext(os.path.basename(args.importmod))[0]
     import imp
-    imp.load_source(name, args.importmod)
+    for path in args.importmod.split(','):
+        name = os.path.splitext(os.path.basename(path))[0]
+        imp.load_source(name, path)
 
 import sys
 from rootpy.tree.filtering import FilterList
