@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+from argparse import ArgumentParser
+
+parser = ArgumentParser(usage="%(prog)s [args] data.root")
+parser.add_argument('-i',"--import", dest="imports",
+                  help="path to module required to unpickle cutflows", default=None)
+parser.add_argument('-c',"--cutflow",
+                  help="cutflow file", required=True)
+parser.add_argument('-m',"--meta",
+                  help="metadata YAML file", required=True)
+parser.add_argument('file')
+args = parser.parse_args()
+
+import os
+if args.imports is not None:
+    import imp
+    for path in args.imports.split(','):
+        name = os.path.splitext(os.path.basename(path))[0]
+        imp.load_source(name, path)
+
+import sys
+from rootpy.tree.filtering import FilterList
+try:
+    import cPickle as pickle
+except:
+    import pickle
+from rootpy.io import openFile
+from rootpy.common import getTrees
+import ROOT
+import yaml
+
+metafile = open(args.meta)
+meta = yaml.load(metafile)
+metafile.close()
+
+name, ext = os.path.splitext(args.file)
+
+if name not in meta:
+    sys.exit("dataset %s not defined in metadata" % name)
+
+f = open(args.cutflow)
+d = pickle.load(f)
+event_filters = d["event"])
+f.close()
+
+events = event_filters[0].total
+weight = meta[name]["weight"] / events
+
+print "Event Filters:"
+print eventFilter
+
+f = openFile(args.file, "UPDATE")
+trees = getTrees(f)
+for tree in trees:
+    tree.SetWeight(weight)
+    tree.Write("", ROOT.TObject.kOverwrite)
+f.Close()
