@@ -57,8 +57,8 @@ for dataset in datasets:
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
-        panda_bexec = "setup.sh"
-        panda_exec = "source setup.sh; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
+        panda_bexec = "./setup.sh build"
+        panda_exec = "source setup.sh worker; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
         panda_outputs = "%s.root,cutflow.p" % dataset 
         panda_extFiles = "*.so"
         if not args.extfile is None:
