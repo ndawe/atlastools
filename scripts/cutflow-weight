@@ -41,14 +41,14 @@ if name not in meta:
 
 f = open(args.cutflow)
 d = pickle.load(f)
-event_filters = d["event"])
+event_filters = d["event"]
 f.close()
 
 events = event_filters[0].total
 weight = meta[name]["weight"] / events
 
 print "Event Filters:"
-print eventFilter
+print event_filters
 
 f = openFile(args.file, "UPDATE")
 trees = getTrees(f)
