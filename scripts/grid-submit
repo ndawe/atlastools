@@ -44,16 +44,16 @@ for dataset in args.datasets:
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
+    panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
+    if args.get:
+        if not os.path.isdir(args.dest):
+            sys.exit("destination path %s does not exist" % args.dest)
+        call("cd %s; run -e grid dq2-get -T 3,8 %s/; cd -" % (args.dest, panda_outDS), shell=True)
+        continue
     inDS = metadata[dataset]["container"]
-    if not type(inDS) is list:
+    if type(inDS) is not list:
         inDS = [inDS]
     for panda_inDS in inDS:
-        panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
-        if args.get:
-            if not os.path.isdir(args.dest):
-                sys.exit("destination path %s does not exist" % args.dest)
-            call("cd %s; run -e grid dq2-get -T 3,8 %s/; cd -" % (args.dest, panda_outDS), shell=True)
-            continue
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
@@ -72,7 +72,7 @@ for dataset in datasets:
             "--outDS %s" % panda_outDS,
             "--outputs %s" % panda_outputs
         ] + panda_opts
-        if not panda_site is None and "--site" not in user_args and not args.nosite:
+        if panda_site is not None and "--site" not in user_args and not args.nosite:
             command.append("--site %s" % panda_site)
         command = " ".join(command)
         if user_args:
