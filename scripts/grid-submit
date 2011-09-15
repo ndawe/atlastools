@@ -63,7 +63,7 @@ for dataset in datasets:
         panda_extFiles = "*.so"
         if not args.extfile is None:
             panda_extFiles = ",".join([panda_extFiles, args.extfile])
-        panda_opts = ["--excludeFile .git", "--extFile %s" % panda_extFiles] # "--nGBPerJob 8"
+        panda_opts = ["--excludeFile .git,*.pyc", "--extFile %s" % panda_extFiles] # "--nGBPerJob 8"
         command = [
             "prun",
             "--bexec \"%s\"" % panda_bexec,
