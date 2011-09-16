@@ -22,7 +22,7 @@ pdgid_names = {}
 root_names = {}
 
 
-def pdgid_to_name (id):
+def id_to_name (id):
     """Convert a PDG ID to a printable string.
     """
     name = pdgid_names.get(id)
@@ -30,7 +30,7 @@ def pdgid_to_name (id):
     return name
 
 
-def pdgid_to_root_name (id):
+def id_to_root_name (id):
     """Convert a PDG ID to a string with root markup.
     """
     name = root_names.get(id)
