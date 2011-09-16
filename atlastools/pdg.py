@@ -21,9 +21,9 @@ pdgid_names = {}
 # Table to translate from PDG IDs to strings with root markup.
 root_names = {}
 
-
 def id_to_name (id):
-    """Convert a PDG ID to a printable string.
+    """
+    Convert a PDG ID to a printable string.
     """
     name = pdgid_names.get(id)
     if not name: name = `id`
@@ -31,13 +31,12 @@ def id_to_name (id):
 
 
 def id_to_root_name (id):
-    """Convert a PDG ID to a string with root markup.
+    """
+    Convert a PDG ID to a string with root markup.
     """
     name = root_names.get(id)
     if not name: name = `id`
     return name
-
-
 
 #
 # Table of PDG IDs, associating the ID codes with up to several names.
