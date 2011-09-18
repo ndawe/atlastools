@@ -14,4 +14,4 @@ class GRLFilter(EventFilter):
 
     def passes(self, event):
 
-        return (event.RunNumber[0], event.lbn[0]) in self.grl
+        return (event.RunNumber, event.lbn) in self.grl
