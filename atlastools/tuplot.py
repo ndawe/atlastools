@@ -200,8 +200,9 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
             localCuts &= Cut(sample_props["cuts"])
         hist = htemplate.Clone()
 
-        if sample_props.has_key("weights"):
-            weights = Cut(sample_props["weights"], from_file=(os.path.isfile(sample_props["weights"])))
+        if "weights" in sample_props:
+            weight_string = os.path.expandvars(sample_props["weights"])
+            weights = Cut(weight_string, from_file=(os.path.isfile(weight_string)))
             localCuts = weights * localCuts
         
         common.draw_samples(samplelist, expression, hist, cuts = localCuts)
