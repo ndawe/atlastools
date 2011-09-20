@@ -1,6 +1,6 @@
 from ROOT import TStyle
 
-def getstyle():
+def get_style():
     
     atlasStyle = TStyle("ATLAS","Atlas style")
 
