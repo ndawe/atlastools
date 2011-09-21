@@ -41,6 +41,7 @@ properties = {"title"       : {"type":"str","value":""},
               "showbinsize" : {"type":"bool","value":True},
               "showlegend"  : {"type":"bool","value":True},
               "legendmode"  : {"type":"bool","value":True},
+              "ignoretreeweights" : {"type":"bool","value":False},
               "imageformat" : {"type":"str","value":"png"}}
 
 canvas = Canvas(uuid.uuid4().hex,uuid.uuid4().hex,0,0,properties["canvaswidth"]["value"],properties["canvasheight"]["value"])
@@ -73,10 +74,10 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
         samplelist = manager.get_samples(sample["sample"], properties = sample)
         for subsample in samplelist:
             if not subsample:
-                print "sample %s not found"%(sample["name"])
+                print "sample %s not found"%(sample["sample"])
                 return None
             if not subsample.trees:
-                print "sample %s not found"%(sample["name"])
+                print "sample %s not found"%(sample["sample"])
                 return None
         samples.append(samplelist)
    
@@ -205,7 +206,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
             weights = Cut(weight_string, from_file=(os.path.isfile(weight_string)))
             localCuts = weights * localCuts
         
-        common.draw_samples(samplelist, expression, hist, cuts = localCuts)
+        common.draw_samples(samplelist, expression, hist, cuts = localCuts, weighted=(not properties["ignoretreeweights"]["value"]))
 
         if label:
             hist.SetTitle(label)
