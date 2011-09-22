@@ -15,6 +15,16 @@ conversion.  Similarly, root_names and pdgid_to_root_name translate to
 strings with root markup.
 """
 
+from ROOT import TDatabasePDG
+import os
+
+db = TDatabasePDG()
+db.ReadPDGTable(os.path.expandvars("${ROOTSYS}/etc/pdg_table.txt"))
+
+def GetParticle(id):
+
+    return db.GetParticle(id)
+
 # Table to translate from PDG IDs to printable strings.
 pdgid_names = {}
 
