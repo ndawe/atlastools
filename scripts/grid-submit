@@ -26,6 +26,7 @@ import sys
 from subprocess import call
 import fnmatch
 import os
+from glob import glob
 
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
@@ -40,6 +41,22 @@ for dataset in args.datasets:
         datasets += fnmatch.filter(sorted_datasets, dataset)
     else:
         datasets.append(dataset)
+
+exclude_files = []
+extra_files = []
+if os.path.isfile('.pandaconfig'):
+    with open('.pandaconfig') as f:
+        for i, line in enumerate(f.readlines()):
+            try:
+                op, path = line.strip().split()
+            except:
+                sys.exit(".pandaconfig: '%s' not understood on line %i" % i)
+            if op == 'include':
+                extra_files += glob(path)
+            elif op == 'exclude':
+                exclude_files += glob(path)
+            else:
+                sys.exit(".pandaconfig: operation '%s' not understood on line %i" % i)
 
 for dataset in datasets:
     if not dataset in metadata:
@@ -60,10 +77,13 @@ for dataset in datasets:
         panda_bexec = "./setup.sh build"
         panda_exec = "source setup.sh worker; grid-batch --dataset %s --metadata %s --student %s %%IN" % (dataset, args.metadata, args.student)
         panda_outputs = "%s.root,cutflow.p" % dataset 
-        panda_extFiles = "*.so"
         if not args.extfile is None:
             panda_extFiles = ",".join([panda_extFiles, args.extfile])
-        panda_opts = ["--excludeFile .git,*.pyc", "--extFile %s" % panda_extFiles] # "--nGBPerJob 8"
+        panda_opts = []
+        if exclude_files:
+            panda_opts.append("--excludeFile %s" % ','.join(exclude_files))
+        if extra_files:
+            panda_opts.append("--extFile %s" % ','.join(extra_files))
         command = [
             "prun",
             "--bexec \"%s\"" % panda_bexec,
