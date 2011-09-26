@@ -109,7 +109,7 @@ for fileset in filesets:
         fileset = fileset,
         nstudents = args.nproc,
         process = eval(args.student),
-        connect_queue = multiprocessing.Queue(-1)
+        connect_queue = multiprocessing.Queue(-1),
         grl = args.grl,
         events = args.events,
         options = user_args)
