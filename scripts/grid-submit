@@ -47,16 +47,19 @@ extra_files = []
 if os.path.isfile('.pandaconfig'):
     with open('.pandaconfig') as f:
         for i, line in enumerate(f.readlines()):
+            if line.startswith('#'):
+                continue
+            line = line.strip()
             try:
-                op, path = line.strip().split()
+                op, path = line.split()
             except:
-                sys.exit(".pandaconfig: '%s' not understood on line %i" % i)
+                sys.exit(".pandaconfig: '%s' not understood on line %i" % (line, i+1))
             if op == 'include':
                 extra_files += glob(path)
             elif op == 'exclude':
                 exclude_files += glob(path)
             else:
-                sys.exit(".pandaconfig: operation '%s' not understood on line %i" % i)
+                sys.exit(".pandaconfig: operation '%s' not understood on line %i" % (op, i+1))
 
 for dataset in datasets:
     if not dataset in metadata:
