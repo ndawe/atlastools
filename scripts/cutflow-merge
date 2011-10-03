@@ -3,17 +3,19 @@
 from argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [args] cutflow1.p cutflow2.p ...")
-parser.add_argument('-i',"--import", dest="imports",
-                  help="path to module required to unpickle cutflows", default=None)
+#parser.add_argument('-i',"--import", dest="imports",
+#                  help="path to module required to unpickle cutflows", default=None)
 parser.add_argument('files', nargs="+")
 args = parser.parse_args()
 
+"""
 if args.imports is not None:
     import os
     import imp
     for path in args.imports.split(','):
         name = os.path.splitext(os.path.basename(path))[0]
         imp.load_source(name, path)
+"""
 
 import sys
 from rootpy.tree.filtering import FilterList

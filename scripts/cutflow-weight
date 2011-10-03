@@ -3,8 +3,8 @@
 from argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [args] data.root")
-parser.add_argument('-i',"--import", dest="imports",
-                  help="path to module required to unpickle cutflows", default=None)
+#parser.add_argument('-i',"--import", dest="imports",
+#                  help="path to module required to unpickle cutflows", default=None)
 parser.add_argument('-c',"--cutflow",
                   help="cutflow file", required=True)
 parser.add_argument('-m',"--meta",
@@ -12,12 +12,14 @@ parser.add_argument('-m',"--meta",
 parser.add_argument('file')
 args = parser.parse_args()
 
+"""
 import os
 if args.imports is not None:
     import imp
     for path in args.imports.split(','):
         name = os.path.splitext(os.path.basename(path))[0]
         imp.load_source(name, path)
+"""
 
 import sys
 from rootpy.tree.filtering import FilterList
@@ -25,7 +27,7 @@ try:
     import cPickle as pickle
 except:
     import pickle
-from rootpy.io import openFile
+from rootpy.io import open as openFile
 from rootpy.common import getTrees
 import ROOT
 import yaml
