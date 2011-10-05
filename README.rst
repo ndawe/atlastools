@@ -7,5 +7,5 @@ This package depends on rootpy which you will also need to install::
 
 Install
 =======
-
+::
     python setup.py install --user
