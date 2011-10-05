@@ -1,15 +1,1 @@
-DEPENDENCIES:
-
-This package depends on rootpy which you will also need to install:
-
-git clone git://github.com/ndawe/rootpy.git
-
-INSTALL:
-
-python setup.py install --prefix=/path/to/install/dir
-
-SETUP:
-
-source /path/to/install/dir/etc/atlastools_setup.[c]sh
-
-(put this in your .bashrc)
+README.rst
