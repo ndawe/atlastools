@@ -55,9 +55,21 @@ if os.path.isfile('.pandaconfig'):
             except:
                 sys.exit(".pandaconfig: '%s' not understood on line %i" % (line, i+1))
             if op == 'include':
-                extra_files += glob(path)
+                files = glob(path)
+                for name in files:
+                    if name in exclude_files:
+                        print "conflict between included %s and excluded %s" % (path, name)
+                        print "including %s anyway..." % name
+                        files.remove(name)
+                extra_files += files
             elif op == 'exclude':
-                exclude_files += glob(path)
+                files = glob(path)
+                for name in files:
+                    if name in extra_files:
+                        print "conflict between included %s and excluded %s" % (name, path)
+                        print "including %s anyway..." % name
+                        files.remove(name)
+                exclude_files += files
             else:
                 sys.exit(".pandaconfig: operation '%s' not understood on line %i" % (op, i+1))
 
