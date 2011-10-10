@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-from argparse import ArgumentParser
+try:
+    from argparse import ArgumentParser
+except ImportError:
+    from rootpy.backports.argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [args] samplename1 samplename2 ...")
 parser.add_argument('-m',"--meta", type=str, dest="metadata",
