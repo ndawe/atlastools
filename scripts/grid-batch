@@ -68,11 +68,13 @@ if not meta:
 fileset = Fileset(
     name = args.dataset,
     title = datasets.labels[meta["label"]],
+    label = None,
     datatype = datasets.types[meta["type"]],
     classtype = datasets.classes[meta["class"]],
     treename = meta["tree"],
     weight = meta["weight"],
     files = args.files,
+    tags = None,
     meta = None,
     properties = None
 )

@@ -171,11 +171,13 @@ def get_sample(name, metadata, runs = None, periods = None):
     return Fileset(
             name = name,
             title = labeltype,
+            label = None,
             datatype = datatype,
             classtype = classtype,
             treename = treename,
             weight = weight,
             files = files,
+            tags = None,
             meta = None,
             properties = None
         )
