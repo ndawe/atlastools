@@ -24,6 +24,7 @@ import ROOT
 import glob
 from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
+from atlastools import utils
 from rootpy.data.dataset import Fileset
 import multiprocessing
 import yaml
@@ -50,7 +51,7 @@ except Exception as ex:
     sys.exit(1)
 
 if os.path.isdir(args.files):
-    args.files = glob.glob(os.path.join(args.files, "*.root*"))
+    args.files = utils.all_files_matching(args.files, '*.root*')
 else:
     args.files = args.files.split(',')
 if len(args.files) == 0:

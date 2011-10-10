@@ -19,3 +19,15 @@ def pt2et(pt, eta, m):
 def Mvis(et1, phi1, et2, phi2):
 
     return math.sqrt(2. * et1 * et2 * (1. - math.cos(dphi(phi1, phi2))))
+
+import os
+import fnmatch
+
+def all_files_matching(dir, pattern):
+    
+    matched = []
+    for path, dirs, files in os.walk(dir):
+        for file in files:
+            if fnmatch.fnmatch(file, pattern):
+                matched.append(os.path.join(path, file))
+    return matched
