@@ -45,8 +45,7 @@ if not args.metadata:
 
 try:
     # remove .py extension if present
-    if args.student.endswith(".py"):
-        args.student, _tmp = os.path.splitext(args.student)
+    args.student = os.path.splitext(args.student)[0]
     print "importing %s..."% args.student
     exec "from %s import %s"% (args.student, args.student)
 except Exception as ex:
