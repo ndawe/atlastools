@@ -6,22 +6,22 @@ except ImportError:
     from rootpy.backports.argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [args] samplename1 samplename2 ...")
-parser.add_argument('-m',"--meta", type=str, dest="metadata",
+parser.add_argument('-m',"--meta", dest="metadata",
                   help="", default="datasets.yml")
-parser.add_argument('-v', "--version", type=int, dest="version",
-                  help="version number appended to output dataset name", default=1)
+parser.add_argument('-v', "--version",
+                  help="version number/string appended to output dataset name", default='v1')
 parser.add_argument("--extFile", type=str, dest="extfile",
                   help="extra files to send to worker nodes", default=None)
-parser.add_argument('-s',"--student", type=str, dest="student",
+parser.add_argument('-s',"--student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", required=True)
-parser.add_argument('-u',"--user", type=str, dest="user",
+parser.add_argument('-u',"--user",
                   help="your grid dataset username i.e. JohnDoe", required=True)
 parser.add_argument("--nosite", action='store_true',
                   help="override site in metadata and let the grid decide")
 parser.add_argument('-g', "--get", action='store_true',
                   help="download datasets")
-parser.add_argument('-d', '--dest', type=str, default='.', help="directory in which to download the datasets")
-parser.add_argument('datasets', type=str, nargs="+")
+parser.add_argument('-d', '--dest', default='.', help="directory in which to download the datasets")
+parser.add_argument('datasets', nargs="+")
 args, user_args = parser.parse_known_args()
 
 import yaml
@@ -79,7 +79,7 @@ if os.path.isfile('.pandaconfig'):
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
-    panda_outDS = "user.%s.%s.%s.v%i" % (args.user, args.student, dataset, args.version)
+    panda_outDS = "user.%s.%s.%s.%s" % (args.user, args.student, dataset, args.version)
     if args.get:
         if not os.path.isdir(args.dest):
             sys.exit("destination path %s does not exist" % args.dest)
