@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+try:
+    from argparse import ArgumentParser
+except:
+    from rootpy.backports.argparse import ArgumentParser
+
+parser = ArgumentParser()
+parser.add_argument('-o', '--output', required=True)
+parser.add_argument('inputs', nargs='+')
+args = parser.parse_args()
+
+from subprocess import call
+
+if args.output.endswith('.root'):
+    # standard ROOT merge
+    call('hadd %s %s' % (args.output, ' '.join(args.inputs)), shell=True)
+elif args.output.endswith('.p'):
+    # merge cutflow pickles
+    try:
+        import cPickle as pickle
+    except ImportError:
+        import pickle
+    from rootpy.tree.filtering import Filter, FilterList
+    event_filter_lists = []
+    object_filter_lists = []
+    for input in args.inputs:
+        with open(input) as p:
+            d = pickle.load(p)
+            event_filter_lists.append(d['event'])
+            object_filter_lists.append(d['object'])
+    event_filter_list = reduce(FilterList.merge, event_filter_lists)
+    object_filter_list = reduce(FilterList.merge, object_filter_lists)
+    with open(args.output) as output:
+        pickle.dump({'event': event_filter_list,
+                     'object': object_filter_list}, output)
+else:
+    sys.exit("unsupported file type")
