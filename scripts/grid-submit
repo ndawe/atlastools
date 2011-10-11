@@ -108,12 +108,14 @@ for dataset in datasets:
         if extra_files:
             panda_opts.append("--extFile %s" % ','.join(extra_files))
         command = [
-            "prun",
-            "--bexec \"%s\"" % panda_bexec,
-            "--exec \"%s\"" % panda_exec,
-            "--inDS %s" % panda_inDS,
-            "--outDS %s" % panda_outDS,
-            "--outputs %s" % panda_outputs
+            'prun',
+            '--bexec "%s"' % panda_bexec,
+            '--exec "%s"' % panda_exec,
+            '--inDS %s' % panda_inDS,
+            '--outDS %s' % panda_outDS,
+            '--outputs %s' % panda_outputs,
+            '--mergeOutput',
+            '--mergeScript grid-merge'
         ] + panda_opts
         if panda_site is not None and "--site" not in user_args and not args.nosite:
             command.append("--site %s" % panda_site)
