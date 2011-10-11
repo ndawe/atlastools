@@ -1,3 +1,3 @@
-from ROOT import *
-ROOT.gROOT.LoadMacro("AtlasUtils.C") 
+import ROOT
 
+ROOT.gROOT.LoadMacro("AtlasUtils.C")
