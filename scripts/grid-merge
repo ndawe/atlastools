@@ -31,7 +31,7 @@ elif args.output.endswith('.p'):
             object_filter_lists.append(d['object'])
     event_filter_list = reduce(FilterList.merge, event_filter_lists)
     object_filter_list = reduce(FilterList.merge, object_filter_lists)
-    with open(args.output) as output:
+    with open(args.output, 'w') as output:
         pickle.dump({'event': event_filter_list,
                      'object': object_filter_list}, output)
 else:
