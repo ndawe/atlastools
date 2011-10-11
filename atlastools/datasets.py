@@ -8,7 +8,6 @@ from atlastools import runperiods
 from rootpy.data.dataset import Fileset
 
 mcpattern = re.compile("^(optimized.)?group(?P<year>[0-9]{2}).(?P<group>[^.]+).mc(?P<prodyear>[0-9]{2})[_]?(?P<energy>[0-9]{1,2})(TeV)?.(?P<run>[0-9]+).(?P<name>).(?P<tag>[^.]+).(?P<suffix>.+)$")
-#datapattern = re.compile("^group(?P<year>[0-9]+).(?P<group>[^.]+).(?P<run>[0-9]+).(?P<stream>[^.]+).(?P<tag>[^.]+).(?P<version>[0-9\-]+)(?:.(?P<grl>GRL))?.D3PD.(?:(?P<edition>[0-9]+).)?(?P<suffix>.+)?$")
 datapattern = re.compile("^(\w+).(?P<name>[a-zA-Z_\-0-9]+).(?P<run>[0-9]+).*$")
 
 DATA,MC = range(2)
