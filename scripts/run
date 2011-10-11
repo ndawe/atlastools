@@ -10,13 +10,13 @@ except ImportError:
     from rootpy.backports.argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [options] command")
-parser.add_argument("--env","-e",type=str,dest="env",default="",help="the name of the environment")
+parser.add_argument('-e', '--env', required=True,
+                    help="the name of the environment")
 args, user_args = parser.parse_known_args()
 
-if args.env != "":
-    status = environment.load(args.env)
-    if not status:
-        sys.exit(1)
+status = environment.load(args.env)
+if not status:
+    sys.exit(1)
 
 if len(user_args) == 1:
     user_args = user_args[0].split()
