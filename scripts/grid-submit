@@ -25,6 +25,8 @@ parser.add_argument('-g', '--get', action='store_true',
                   help='download datasets')
 parser.add_argument('-d', '--dest', default='.',
                     help='directory in which to download the datasets')
+parser.add_argument('--merge', action='store_true',
+                  help='merge outputs on the grid')
 parser.add_argument('datasets', nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -83,11 +85,11 @@ if os.path.isfile('.pandaconfig'):
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
-    panda_outDS = "user.%s.%s.%s.%s" % (args.user, os.path.splitext(args.student)[0], dataset, args.version)
+    panda_outDS = 'user.%s.%s.%s.%s' % (args.user, os.path.splitext(args.student)[0], dataset, args.version)
     if args.get:
         if not os.path.isdir(args.dest):
             sys.exit("destination path %s does not exist" % args.dest)
-        call("cd %s; run -e grid dq2-get -T 3,8 %s/; cd -" % (args.dest, panda_outDS), shell=True)
+        call('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS), shell=True)
         continue
     inDS = metadata[dataset]['container']
     if type(inDS) is not list:
@@ -96,32 +98,32 @@ for dataset in datasets:
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
-        panda_bexec = "./setup.sh build"
-        panda_exec = "source setup.sh worker; " \
-                     "grid-batch --dataset %s " \
-                     "--metadata %s --student %s %%IN" % \
+        panda_bexec = './setup.sh build'
+        panda_exec = 'source setup.sh worker; ' \
+                     'grid-batch --dataset %s ' \
+                     '--metadata %s --student %s %%IN' % \
                      (dataset, args.metadata, args.student)
-        panda_outputs = "%s.root,cutflow.p" % dataset 
+        panda_outputs = '%s.root,cutflow.p' % dataset 
         panda_opts = []
         if exclude_files:
-            panda_opts.append("--excludeFile %s" % ','.join(exclude_files))
+            panda_opts.append('--excludeFile %s' % ','.join(exclude_files))
         if extra_files:
-            panda_opts.append("--extFile %s" % ','.join(extra_files))
+            panda_opts.append('--extFile %s' % ','.join(extra_files))
         command = [
             'prun',
             '--bexec "%s"' % panda_bexec,
             '--exec "%s"' % panda_exec,
             '--inDS %s' % panda_inDS,
             '--outDS %s' % panda_outDS,
-            '--outputs %s' % panda_outputs,
-            '--mergeOutput',
-            '--mergeScript grid-merge'
+            '--outputs %s' % panda_outputs
         ] + panda_opts
-        if panda_site is not None and "--site" not in user_args and not args.nosite:
-            command.append("--site %s" % panda_site)
-        command = " ".join(command)
+        if args.merge:
+            command += ['--mergeOutput', '--mergeScript grid-merge']
+        if panda_site is not None and '--site' not in user_args and not args.nosite:
+            command.append('--site %s' % panda_site)
+        command = ' '.join(command)
         if user_args:
-            command += " %s" % ' '.join(user_args)
+            command += ' %s' % ' '.join(user_args)
         print "executing:"
         print command
         call(command, shell=True)
