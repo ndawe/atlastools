@@ -83,8 +83,7 @@ if os.path.isfile('.pandaconfig'):
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
-    panda_outDS = "user.%s.%s.%s.%s" % (args.user, args.student, dataset, args.version)
-    #panda_outDS = "user.%s.%s.%s.%s" % (args.user, os.path.splitext(args.student)[0], dataset, args.version)
+    panda_outDS = "user.%s.%s.%s.%s" % (args.user, os.path.splitext(args.student)[0], dataset, args.version)
     if args.get:
         if not os.path.isdir(args.dest):
             sys.exit("destination path %s does not exist" % args.dest)
