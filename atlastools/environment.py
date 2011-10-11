@@ -18,8 +18,7 @@ def define(name):
     """
     if not os.path.exists(PATH):
         os.makedirs(PATH)
-    aliases = subprocess.check_output(["alias", "-p"])
-    env = {"System":os.environ, "Python":sys.path, "aliases": aliases}
+    env = {"System":os.environ, "Python":sys.path}
     env_file = open((os.path.join(PATH, "%s.env"))% name,'wb')
     cPickle.dump(env, env_file)
     env_file.close()
