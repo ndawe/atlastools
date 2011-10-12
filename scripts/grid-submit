@@ -36,6 +36,7 @@ from subprocess import call
 import fnmatch
 import os
 from glob import glob
+import subprocess
 
 metafile = open(args.metadata)
 metadata = yaml.load(metafile)
@@ -82,6 +83,18 @@ if os.path.isfile('.pandaconfig'):
             else:
                 sys.exit(".pandaconfig: operation '%s' not understood on line %i" % (op, i+1))
 
+if not os.path.exists('grid-setup.sh'):
+    print "Copying grid-setup.sh from atlastools..."
+    import pkg_resources
+    import shutil
+    import stat
+    setup_script = pkg_resources.resource_filename('atlastools', 'etc/grid-setup.sh')
+    shutil.copyfile(setup_script, './grid-setup.sh')
+    os.chmod('./grid-setup.sh', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
+                                stat.S_IRGRP | stat.S_IROTH)
+
+subprocess.call('./grid-setup.sh local')
+
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
@@ -127,3 +140,5 @@ for dataset in datasets:
         print "executing:"
         print command
         call(command, shell=True)
+
+subprocess.call('./grid-setup.sh clean')
