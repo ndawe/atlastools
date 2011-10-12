@@ -146,4 +146,4 @@ for dataset in datasets:
         call(command, shell=True)
 
 if not args.get:
-    subprocess.call('./grid-setup.sh clean')
+    subprocess.call('./grid-setup.sh clean', shell=True)
