@@ -5,7 +5,7 @@ import sys
 
 if os.getenv('ROOTPY_GRIDMODE') is None:
 
-    print "Sourcing setup.sh..."
+    print "Sourcing grid-setup.sh..."
     import subprocess
 
     command = ['bash', '-c', 'source grid-setup.sh worker && env']
