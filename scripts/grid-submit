@@ -93,7 +93,7 @@ if not os.path.exists('grid-setup.sh'):
     os.chmod('./grid-setup.sh', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
                                 stat.S_IRGRP | stat.S_IROTH)
 
-subprocess.call('./grid-setup.sh local')
+subprocess.call('./grid-setup.sh local', shell=True)
 
 for dataset in datasets:
     if not dataset in metadata:
