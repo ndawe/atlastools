@@ -112,8 +112,8 @@ for dataset in datasets:
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
-        panda_bexec = './setup.sh build'
-        panda_exec = 'source setup.sh worker; ' \
+        panda_bexec = './grid-setup.sh build'
+        panda_exec = 'source grid-setup.sh worker; ' \
                      'grid-batch --dataset %s ' \
                      '--metadata %s --student %s %%IN' % \
                      (dataset, args.metadata, args.student)
