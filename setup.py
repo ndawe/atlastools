@@ -4,7 +4,7 @@ from distribute_setup import use_setuptools
 use_setuptools()
 
 from atlastools import pkginfo
-from setuptools import setup
+from setuptools import setup, find_packages
 from glob import glob
 
 setup(name='atlastools',
@@ -13,9 +13,9 @@ setup(name='atlastools',
       author='Noel Dawe',
       author_email='noel.dawe@cern.ch',
       url='http://noel.mine.nu/repo',
-      packages=['atlastools'],
+      packages=find_packages(),
       requires=['rootpy', 'yaml', 'goodruns'],
       zip_safe=False,
       scripts=glob('scripts/*'),
-      package_data={'atlastools': ['etc/*']}
+      package_data={'': ['etc/*']}
      )
