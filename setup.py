@@ -17,5 +17,5 @@ setup(name='atlastools',
       requires=['rootpy', 'yaml', 'goodruns'],
       zip_safe=False,
       scripts=glob('scripts/*'),
-      package_data={'': ['etc/*']}
+      package_data={'atlastools': ['etc/*']}
      )

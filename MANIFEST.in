@@ -2,4 +2,4 @@ include *.py
 include README
 include README.rst
 include scripts/*
-include etc/*
+include atlastools/etc/*
