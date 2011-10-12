@@ -116,8 +116,10 @@ for dataset in datasets:
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
         panda_bexec = './grid-setup.sh build'
+        # `which python` is needed since setuptools rewrites the shebang
+        # the sheband specified in the buildjob won't be the same as in the worker job
         panda_exec = 'source grid-setup.sh worker; ' \
-                     'grid-batch --dataset %s ' \
+                     '`which python` grid-batch --dataset %s ' \
                      '--metadata %s --student %s %%IN' % \
                      (dataset, args.metadata, args.student)
         panda_outputs = '%s.root,cutflow.p' % dataset 
