@@ -15,6 +15,7 @@ setup(name='atlastools',
       url='http://noel.mine.nu/repo',
       packages=['atlastools'],
       requires=['rootpy', 'yaml', 'goodruns'],
+      zip_safe=False,
       scripts=glob('scripts/*'),
-      package_data={'': glob('dat/*')}
+      package_data={'': ['etc/*']}
      )
