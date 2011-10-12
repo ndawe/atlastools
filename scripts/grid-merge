@@ -1,5 +1,26 @@
 #!/usr/bin/env python
 
+import os
+import sys
+
+if os.getenv('ROOTPY_GRIDMODE') is None:
+
+    print "Sourcing setup.sh..."
+    import subprocess
+
+    command = ['bash', '-c', 'source setup.sh worker && env']
+
+    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
+
+    for line in proc.stdout:
+        (key, _, value) = line.partition("=")
+        os.environ[key] = value
+
+    proc.communicate()
+    print "Re-executing self..."
+    subprocess.call('`which python` %s' % ' '.join(sys.argv), shell=True)
+    sys.exit(0)
+
 try:
     from argparse import ArgumentParser
 except:

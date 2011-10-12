@@ -7,8 +7,8 @@ import os
 import subprocess
 
 DISPLAY = os.getenv("DISPLAY",'')
-ATLASTOOLS_ROOT = os.getenv("ATLASTOOLS_CONFIG_ROOT",None)
-if not ATLASTOOLS_ROOT:
+ATLASTOOLS_ROOT = os.getenv("ATLASTOOLS_CONFIG_ROOT")
+if ATLASTOOLS_ROOT is None:
     ATLASTOOLS_ROOT = os.getenv("HOME")
 PATH = os.path.join(ATLASTOOLS_ROOT, 'env')
 
