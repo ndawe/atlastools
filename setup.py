@@ -16,6 +16,6 @@ setup(name='atlastools',
       packages=find_packages(),
       requires=['rootpy', 'yaml', 'goodruns'],
       zip_safe=False,
-      scripts=glob('scripts/*'),
+      scripts=glob('scripts/*') + ['atlastools/etc/grid-merge'],
       package_data={'': ['etc/*']}
      )
