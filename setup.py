@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
+from distribute_setup import use_setuptools
+use_setuptools()
+
 from atlastools import pkginfo
-from distutils.core import setup
+from setuptools import setup
 from glob import glob
 
 setup(name='atlastools',
@@ -13,6 +16,5 @@ setup(name='atlastools',
       packages=['atlastools'],
       requires=['rootpy', 'yaml', 'goodruns'],
       scripts=glob('scripts/*'),
-      data_files = [('dat', glob('dat/*'))]
+      package_data={'': glob('dat/*')}
      )
-
