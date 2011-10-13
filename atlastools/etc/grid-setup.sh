@@ -13,7 +13,7 @@ fi
 
 BASE=${PWD}
 
-packages='rootpy goodruns atlastools tabulartext'
+packages='rootpy goodruns atlastools'
 
 repo='http://linuxsoft.cern.ch/cern/slc5X/updates/x86_64/RPMS/'
 GIT_USER=ndawe
