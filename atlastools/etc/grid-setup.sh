@@ -192,22 +192,22 @@ build)
     
     setup_root
 
-    if [[ ! -e rpmroot ]]
+    if [[ ! -e rpmroot ]] & ! ${use_precompiled_python}
     then
         install_rpm ${repo} libxml2-2.6.26-2.1.12.x86_64.rpm libxml2
         install_rpm ${repo} libxml2-devel-2.6.26-2.1.12.x86_64.rpm libxml2
         install_rpm ${repo} libxslt-1.1.17-2.el5_2.2.x86_64.rpm libxslt
         install_rpm ${repo} libxslt-devel-1.1.17-2.el5_2.2.x86_64.rpm libxslt
+        setup_rpm
     fi
+
     if ! ${use_precompiled_python}
     then
         install_python_package cython http://svn.github.com/cython/cython.git
         install_python_package lxml http://svn.github.com/lxml/lxml.git
         install_python_package yaml http://svn.pyyaml.org/pyyaml/tags/3.10/
     fi
-
-    setup_rpm
-
+    
     for package in ${packages}
     do
         install_python_package ${package}
