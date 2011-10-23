@@ -31,6 +31,8 @@ parser.add_argument('datasets', nargs="+")
 args, user_args = parser.parse_known_args()
 
 import yaml
+from configobj import ConfigObj, flatten_errors
+from validate import Validator
 import sys
 from subprocess import call
 import fnmatch
@@ -38,9 +40,29 @@ import os
 from glob import glob
 import subprocess
 
-metafile = open(args.metadata)
-metadata = yaml.load(metafile)
-metafile.close()
+if args.metadata.endswith('.yml'):
+    with open(args.metadata, 'r') as configfile:
+        metadata = yaml.load(configfile)
+else:
+    configspec = os.path.splitext(args.metadata)[0]+'.spec'
+    if not os.path.isfile(configspec):
+        sys.exit('%s does not exist' % configspec)
+    metadata = ConfigObj(args.metadata, configspec=configspec)
+    validator = Validator()
+    result = metadata.validate(validator, preserve_errors=True)
+    if result != True:
+        for entry in flatten_errors(metadata, result):
+            # each entry is a tuple
+            section_list, key, error = entry
+            if key is not None:
+                section_list.append(key)
+            else:
+                section_list.append('[missing section]')
+            section_string = ', '.join(section_list)
+            if error == False:
+                error = 'Missing value or section.'
+            print section_string, ' = ', error
+        sys.exit(1)
 
 sorted_datasets = sorted(metadata.keys())
 
