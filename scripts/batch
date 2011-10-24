@@ -39,6 +39,8 @@ import yaml
 from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
 import multiprocessing
+from configobj import ConfigObj, flatten_errors
+from validate import Validator
 
 sys.path.insert(0,'.')
 
@@ -89,9 +91,29 @@ if args.runs != None:
     else:
         args.runs = [int(args.runs)]
 
-metafile = open(args.metadata)
-metadata = yaml.load(metafile)
-metafile.close()
+if args.metadata.endswith('.yml'):
+    with open(args.metadata, 'r') as configfile:
+        metadata = yaml.load(configfile)
+else:
+    configspec = os.path.splitext(args.metadata)[0]+'.spec'
+    if not os.path.isfile(configspec):
+        sys.exit('%s does not exist' % configspec)
+    metadata = ConfigObj(args.metadata, configspec=configspec)
+    validator = Validator()
+    result = metadata.validate(validator, preserve_errors=True)
+    if result != True:
+        for entry in flatten_errors(metadata, result):
+            # each entry is a tuple
+            section_list, key, error = entry
+            if key is not None:
+                section_list.append(key)
+            else:
+                section_list.append('[missing section]')
+            section_string = ', '.join(section_list)
+            if error == False:
+                error = 'Missing value or section.'
+            print section_string, ' = ', error
+        sys.exit(1)
 
 filesets = []
 for sample in args.datasets:
