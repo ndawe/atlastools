@@ -6,19 +6,19 @@ except ImportError:
     from rootpy.backports.argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%prog [args] file1,file2,file3...")
-parser.add_argument("-v","--verbose", action="store_true", dest="verbose",
+parser.add_argument("-v","--verbose", action="store_true",
                   help="verbose", default=False)
-parser.add_argument("--grl", type=str, dest="grl",
+parser.add_argument("--grl",
                   help="good runs list", default=None)
-parser.add_argument("--events", type=int, dest="events",
+parser.add_argument("--events", type=int,
                   help="number of events to process", default=-1)
-parser.add_argument("--dataset", type=str, dest="dataset",
+parser.add_argument("--dataset",
                   help="name of dataset being processed", default=None)
-parser.add_argument("--metadata", type=str, dest="metadata",
+parser.add_argument("--metadata",
                   help="YAML file containing dataset definitions", default="datasets.yml")
-parser.add_argument('-s',"--student", type=str, dest="student",
+parser.add_argument('-s',"--student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
-parser.add_argument('files', type=str, nargs="?")
+parser.add_argument('files', nargs='?')
 args, user_args = parser.parse_known_args()
 
 import sys
