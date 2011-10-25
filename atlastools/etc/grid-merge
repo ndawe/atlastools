@@ -3,6 +3,7 @@
 import os
 import sys
 
+"""
 if os.getenv('ROOTPY_GRIDMODE') is None:
 
     print "Sourcing grid-setup.sh..."
@@ -20,6 +21,7 @@ if os.getenv('ROOTPY_GRIDMODE') is None:
     print "Re-executing self..."
     subprocess.call('`which python` %s' % ' '.join(sys.argv), shell=True)
     sys.exit(0)
+"""
 
 try:
     from argparse import ArgumentParser
