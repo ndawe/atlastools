@@ -3,11 +3,7 @@
 import sys
 from atlastools import environment
 from subprocess import call
-
-try:
-    from argparse import ArgumentParser
-except ImportError:
-    from rootpy.backports.argparse import ArgumentParser
+from argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [options] command")
 parser.add_argument('-e', '--env', required=True,
