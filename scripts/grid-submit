@@ -155,7 +155,7 @@ for dataset in datasets:
         ] + panda_opts
         if args.merge:
             command += ['--mergeOutput',
-                        '--mergeScript "source grid-setup.sh worker; python \`which grid-merge\` -o %%OUT -i %%IN"']
+                        '--mergeScript "source grid-setup.sh worker; python \`which grid-merge\` -o %OUT -i %IN"']
         if panda_site is not None and '--site' not in user_args and not args.nosite:
             command.append('--site %s' % panda_site)
         command = ' '.join(command)
