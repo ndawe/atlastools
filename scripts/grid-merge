@@ -1,32 +1,6 @@
 #!/usr/bin/env python
 
-import os
-import sys
-
-"""
-if os.getenv('ROOTPY_GRIDMODE') is None:
-
-    print "Sourcing grid-setup.sh..."
-    import subprocess
-
-    command = ['bash', '-c', 'source grid-setup.sh worker && env']
-
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-
-    for line in proc.stdout:
-        (key, _, value) = line.partition("=")
-        os.environ[key] = value
-
-    proc.communicate()
-    print "Re-executing self..."
-    subprocess.call('`which python` %s' % ' '.join(sys.argv), shell=True)
-    sys.exit(0)
-"""
-
-try:
-    from argparse import ArgumentParser
-except:
-    from rootpy.backports.argparse import ArgumentParser
+from argparse import ArgumentParser
 
 parser = ArgumentParser()
 parser.add_argument('-o', '--output', required=True)
@@ -34,6 +8,7 @@ parser.add_argument('inputs', nargs='+')
 args = parser.parse_args()
 
 from subprocess import call
+import sys
 
 if args.output.endswith('.root'):
     # standard ROOT merge
