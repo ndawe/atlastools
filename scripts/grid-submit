@@ -107,15 +107,13 @@ if not args.get:
     import pkg_resources
     import shutil
     import stat
-    
-    for filename in ['grid-setup.sh', 'grid-merge']:
-        if not os.path.exists(filename):
-            print "Copying %s from atlastools..." % filename
-            setup_script = pkg_resources.resource_filename('atlastools', 'etc/%s' % filename)
-            shutil.copyfile(setup_script, filename)
-            os.chmod(filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
-                               stat.S_IRGRP | stat.S_IROTH)
-
+    filename = 'grid-setup.sh' 
+    if not os.path.exists(filename):
+        print "Copying %s from atlastools..." % filename
+        setup_script = pkg_resources.resource_filename('atlastools', 'etc/%s' % filename)
+        shutil.copyfile(setup_script, filename)
+        os.chmod(filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
+                           stat.S_IRGRP | stat.S_IROTH)
     subprocess.call('./grid-setup.sh local', shell=True)
 
 for dataset in datasets:
@@ -156,7 +154,8 @@ for dataset in datasets:
             '--outputs %s' % panda_outputs
         ] + panda_opts
         if args.merge:
-            command += ['--mergeOutput', '--mergeScript grid-merge']
+            command += ['--mergeOutput',
+                        '--mergeScript "source grid-setup.sh worker; python \`which grid-merge\` -o %%OUT -i %%IN"']
         if panda_site is not None and '--site' not in user_args and not args.nosite:
             command.append('--site %s' % panda_site)
         command = ' '.join(command)

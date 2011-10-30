@@ -12,10 +12,10 @@ setup(name='atlastools',
       description='ATLAS utilities',
       author='Noel Dawe',
       author_email='noel.dawe@cern.ch',
-      url='http://noel.mine.nu/repo',
+      url='http://github.com/ndawe/atlastools',
       packages=find_packages(),
       install_requires=['rootpy', 'PyYAML', 'configobj', 'goodruns', 'argparse'],
       zip_safe=False,
-      scripts=glob('scripts/*') + ['atlastools/etc/grid-merge'],
+      scripts=glob('scripts/*') + ['atlastools/etc/grid-setup.sh'],
       package_data={'': ['etc/*']}
      )
