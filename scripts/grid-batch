@@ -96,7 +96,7 @@ if args.grl is None and meta.has_key("grl"):
     args.grl = meta["grl"]
 
 supervisor = ATLASSupervisor(
-    studentname = args.student,
+    student = args.student,
     outputname = args.dataset,
     fileset = fileset,
     nstudents = 1,

@@ -115,7 +115,7 @@ for sample in args.datasets:
 
 for fileset in filesets:
     supervisor = ATLASSupervisor(
-        studentname = args.student,
+        student = args.student,
         outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
         fileset = fileset,
         nstudents = args.nproc,
