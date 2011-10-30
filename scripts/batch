@@ -115,11 +115,10 @@ for sample in args.datasets:
 
 for fileset in filesets:
     supervisor = ATLASSupervisor(
-        name = args.student,
+        studentname = args.student,
         outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
         fileset = fileset,
         nstudents = args.nproc,
-        studentname = args.student,
         connect_queue = multiprocessing.Queue(-1),
         grl = args.grl,
         events = args.events,
