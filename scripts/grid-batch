@@ -42,15 +42,6 @@ if not args.dataset:
 if not args.metadata:
     sys.exit("metadata file not specified!")
 
-try:
-    # remove .py extension if present
-    args.student = os.path.splitext(args.student)[0]
-    print "importing %s..."% args.student
-    exec "from %s import %s"% (args.student, args.student)
-except Exception as ex:
-    print ex
-    sys.exit(1)
-
 if os.path.isdir(args.files):
     args.files = utils.all_files_matching(args.files, '*.root*')
 else:
@@ -109,7 +100,7 @@ supervisor = ATLASSupervisor(
     outputname = args.dataset,
     fileset = fileset,
     nstudents = 1,
-    process = eval(args.student),
+    studentname = args.student,
     connect_queue = multiprocessing.Queue(-1),
     gridmode = True,
     grl = args.grl,
