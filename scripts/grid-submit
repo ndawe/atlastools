@@ -71,6 +71,20 @@ for dataset in args.datasets:
     else:
         datasets.append(dataset)
 
+if not args.get:
+    
+    import pkg_resources
+    import shutil
+    import stat
+    filename = 'grid-setup.sh' 
+    if not os.path.exists(filename):
+        print "Copying %s from atlastools..." % filename
+        setup_script = pkg_resources.resource_filename('atlastools', 'etc/%s' % filename)
+        shutil.copyfile(setup_script, filename)
+        os.chmod(filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
+                           stat.S_IRGRP | stat.S_IROTH)
+    subprocess.call('./grid-setup.sh local', shell=True)
+
 exclude_files = []
 extra_files = []
 if os.path.isfile('.pandaconfig'):
@@ -101,20 +115,6 @@ if os.path.isfile('.pandaconfig'):
                 exclude_files += files
             else:
                 sys.exit(".pandaconfig: operation '%s' not understood on line %i" % (op, i+1))
-
-if not args.get:
-    
-    import pkg_resources
-    import shutil
-    import stat
-    filename = 'grid-setup.sh' 
-    if not os.path.exists(filename):
-        print "Copying %s from atlastools..." % filename
-        setup_script = pkg_resources.resource_filename('atlastools', 'etc/%s' % filename)
-        shutil.copyfile(setup_script, filename)
-        os.chmod(filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
-                           stat.S_IRGRP | stat.S_IROTH)
-    subprocess.call('./grid-setup.sh local', shell=True)
 
 for dataset in datasets:
     if not dataset in metadata:
