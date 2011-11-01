@@ -29,7 +29,7 @@ function download_from_github() {
     PACKAGE=${1}
     if [[ ! -e ${PACKAGE}.tar.gz ]]
     then
-        if ! wget --no-check-certificate -O ${PACKAGE}.tar.gz http://github.com/${GIT_USER}/${PACKAGE}/tarball/master
+        if ! wget --no-check-certificate -O ${PACKAGE}.tar.gz https://github.com/${GIT_USER}/${PACKAGE}/tarball/master
         then
             echo "Failed to download package ${PACKAGE} from github"
             exit 1
