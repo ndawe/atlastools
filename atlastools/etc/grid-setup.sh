@@ -50,10 +50,10 @@ function install_python_package() {
             then
                 echo "Installing ${PACKAGE}..."
                 cd ${PACKAGE}
-                echo ">>> lib dirs: ${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64"
-                echo ">>> include dirs: ${RPM_INCLUDE}"
-                python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
-                python setup.py build -e "/usr/bin/env python"
+                #echo ">>> lib dirs: ${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64"
+                #echo ">>> include dirs: ${RPM_INCLUDE}"
+                #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
+                #python setup.py build -e "/usr/bin/env python"
                 python setup.py install --user
                 cd ..
             fi
@@ -194,7 +194,7 @@ build-root-python)
 
 build-packages)
     
-    export PYTHONUSERBASE=${BASE}/python
+    export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
 
     for package in ${packages}
@@ -213,7 +213,7 @@ worker)
     then
         setup_root
     fi
-    export PYTHONUSERBASE=${BASE}/python
+    export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
     export ROOTPY_GRIDMODE=true
     ;;
