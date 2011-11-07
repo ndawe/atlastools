@@ -2,7 +2,7 @@
 # Author: Noel Dawe
 
 function print_help() {
-    echo "Usage : $0 [clean|local|build|worker]"
+    echo "Usage : $0 [clean|local|build-root-python|build-packages|worker]"
     exit
 }
 
@@ -54,7 +54,7 @@ function install_python_package() {
                 echo ">>> include dirs: ${RPM_INCLUDE}"
                 python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
                 python setup.py build -e "/usr/bin/env python"
-                python setup.py install
+                python setup.py install --user
                 cd ..
             fi
         else
@@ -93,7 +93,6 @@ function setup_root() {
 }
 
 function setup_python() {
-    export PATH=${BASE}/python/bin${PATH:+:$PATH}
     export PYTHONPATH=${BASE}/python/lib/python${PYTHON_VERS_MAJOR}/site-packages${PYTHONPATH:+:$PYTHONPATH}
     export LD_LIBRARY_PATH=${BASE}/python/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     python_version=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
@@ -128,7 +127,7 @@ local)
     done
     ;;
 
-build)
+build-root-python)
 
     # install python and ROOT
 
@@ -191,23 +190,13 @@ build)
     fi
     
     setup_root
+    ;;
 
-    if [[ ! -e rpmroot ]] & ! ${use_precompiled_python}
-    then
-        install_rpm ${repo} libxml2-2.6.26-2.1.12.x86_64.rpm libxml2
-        install_rpm ${repo} libxml2-devel-2.6.26-2.1.12.x86_64.rpm libxml2
-        install_rpm ${repo} libxslt-1.1.17-2.el5_2.2.x86_64.rpm libxslt
-        install_rpm ${repo} libxslt-devel-1.1.17-2.el5_2.2.x86_64.rpm libxslt
-        setup_rpm
-    fi
-
-    if ! ${use_precompiled_python}
-    then
-        install_python_package cython http://svn.github.com/cython/cython.git
-        install_python_package lxml http://svn.github.com/lxml/lxml.git
-        install_python_package yaml http://svn.pyyaml.org/pyyaml/tags/3.10/
-    fi
+build-packages)
     
+    export PYTHONUSERBASE=${BASE}/python
+    export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
+
     for package in ${packages}
     do
         install_python_package ${package}
@@ -216,10 +205,17 @@ build)
 
 worker)
     
+    if [[ -e python ]]
+    then
+        setup_python
+    fi
+    if [[ -e root ]]
+    then
+        setup_root
+    fi
+    export PYTHONUSERBASE=${BASE}/python
+    export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
     export ROOTPY_GRIDMODE=true
-    setup_rpm
-    setup_python
-    setup_root
     ;;
 
 *)
