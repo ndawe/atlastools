@@ -132,7 +132,7 @@ for dataset in datasets:
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
-        panda_bexec = './grid-setup.sh build'
+        panda_bexec = './grid-setup.sh build-packages'
         # `which python` is needed since setuptools rewrites the shebang
         # the sheband specified in the buildjob won't be the same as in the worker job
         panda_exec = 'source grid-setup.sh worker; ' \
