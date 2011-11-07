@@ -194,6 +194,10 @@ build-root-python)
 
 build-packages)
     
+    if [[ ! -e user-python ]]
+    then
+        mkdir user-python
+    fi
     export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
 
