@@ -54,7 +54,11 @@ function install_python_package() {
                 #echo ">>> include dirs: ${RPM_INCLUDE}"
                 #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
                 #python setup.py build -e "/usr/bin/env python"
-                python setup.py install --user
+                if ! python setup.py install --user
+                then
+                    echo "Failed to install package ${PACKAGE}"
+                    exit 1
+                fi
                 cd ..
             fi
         else
