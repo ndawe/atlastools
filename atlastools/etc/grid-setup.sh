@@ -54,6 +54,7 @@ function install_python_package() {
                 #echo ">>> include dirs: ${RPM_INCLUDE}"
                 #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
                 #python setup.py build -e "/usr/bin/env python"
+                #python setup.py setopt --command build_ext --option library-dirs --set-value ${PYTHON_LIB}
                 if ! python setup.py install --user
                 then
                     echo "Failed to install package ${PACKAGE}"
@@ -99,10 +100,6 @@ function setup_root() {
 function setup_python() {
     export PYTHONPATH=${BASE}/python/lib/python${PYTHON_VERS_MAJOR}/site-packages${PYTHONPATH:+:$PYTHONPATH}
     export LD_LIBRARY_PATH=${BASE}/python/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    python_version=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
-    PYTHON_LIB=`python -c "import distutils.sysconfig; import os; print os.path.dirname(distutils.sysconfig.get_python_lib(standard_lib=True))"`
-    echo "Python version "${python_version}
-    echo "Python lib located in "${PYTHON_LIB}
 }
 
 case "${1}" in
@@ -198,9 +195,16 @@ build-root-python)
 
 build-packages)
     
+    python_version=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
+    PYTHON_LIB=`python -c "import distutils.sysconfig; import os; print os.path.dirname(distutils.sysconfig.get_python_lib(standard_lib=True))"`
+    echo "Python version "${python_version}
+    echo "Python lib located in "${PYTHON_LIB}
+
     if [[ ! -e user-python ]]
     then
-        mkdir user-python
+        echo "Creating user python area"
+        mkdir -p user-python/lib/python${python_version}/site-packages/
+        mkdir user-python/bin
     fi
     export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
