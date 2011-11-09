@@ -11,6 +11,8 @@ parser.add_argument("--grl",
                   help="good runs list", default=None)
 parser.add_argument("--events", type=int, dest="events",
                   help="number of events to process", default=-1)
+parser.add_argument("--random-sample", type=int, dest="rsample",
+                  help="specify length of a random sampling of input files to process", default=None)
 parser.add_argument('-p',"--periods",
                   help="data periods separated by commas or all period by default if not specified", default=None)
 parser.add_argument('-r',"--runs",
@@ -106,7 +108,8 @@ for sample in args.datasets:
     fileset = datasets.get_sample(sample,
                                   metadata[sample],
                                   periods = args.periods,
-                                  runs = args.runs)
+                                  runs = args.runs,
+                                  random_sample = args.rsample)
     if not fileset:
         print "FATAL: sample %s does not exist!"%sample
         sys.exit(1)

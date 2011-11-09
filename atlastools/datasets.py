@@ -6,6 +6,8 @@ import yaml
 import fnmatch
 from atlastools import runperiods
 from rootpy.data.dataset import Fileset
+import random
+
 
 mcpattern = re.compile("^(optimized.)?group(?P<year>[0-9]{2}).(?P<group>[^.]+).mc(?P<prodyear>[0-9]{2})[_]?(?P<energy>[0-9]{1,2})(TeV)?.(?P<run>[0-9]+).(?P<name>).(?P<tag>[^.]+).(?P<suffix>.+)$")
 datapattern = re.compile("^(\w+).(?P<name>[a-zA-Z_\-0-9]+).(?P<run>[0-9]+).*$")
@@ -33,7 +35,7 @@ labels = {
 
 dataroot = os.getenv('DATAROOT','.')
 
-def get_sample(name, metadata, runs = None, periods = None):
+def get_sample(name, metadata, runs = None, periods = None, random_sample = None):
 
     if "local" in metadata:
         if os.path.isdir(metadata["local"]):
@@ -108,7 +110,9 @@ def get_sample(name, metadata, runs = None, periods = None):
     for root, dirnames, filenames in os.walk(base):
         for filename in fnmatch.filter(filenames, '*.root*'):
             files.append(os.path.join(root, filename))
-
+    if random_sample:
+        if random_sample < len(files):
+            files = random.sample(files, random_sample)
     """
     dirs = glob.glob(os.path.join(base,'*'))
     actualdirs = []
