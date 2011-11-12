@@ -13,6 +13,8 @@ parser.add_argument("--events", type=int, dest="events",
                   help="number of events to process", default=-1)
 parser.add_argument("--random-sample", type=int, dest="rsample",
                   help="specify length of a random sampling of input files to process", default=None)
+parser.add_argument("--nice", type=int, dest="nice",
+                  help="nice students", default=0)
 parser.add_argument('-p',"--periods",
                   help="data periods separated by commas or all period by default if not specified", default=None)
 parser.add_argument('-r',"--runs",
@@ -125,6 +127,7 @@ for fileset in filesets:
         connect_queue = multiprocessing.Queue(-1),
         grl = args.grl,
         events = args.events,
+        nice = args.nice,
         options = user_args)
     try:
         supervisor.start()
