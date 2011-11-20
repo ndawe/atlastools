@@ -125,6 +125,9 @@ for dataset in datasets:
         call('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS), shell=True)
         continue
     inDS = metadata[dataset]['container']
+    if os.path.isfile(inDS):
+        with open(inDS) as f:
+            inDS = [s.strip() for s in f.readlines()]
     if type(inDS) is not list:
         inDS = [inDS]
     for panda_inDS in inDS:
