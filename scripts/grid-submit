@@ -8,7 +8,7 @@ parser.add_argument('-m', '--meta', dest='metadata',
                     default='datasets.yml')
 parser.add_argument('-v', '--version',
                     help='version number/string appended to output dataset name',
-                    default='v1')
+                    default=None)
 parser.add_argument('-s', '--student',
                     help='the file (excluding .py extension) containing a '
                          'class of the same name inheriting '
@@ -118,18 +118,24 @@ if os.path.isfile('panda.inc'):
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
-    panda_outDS = 'user.%s.%s.%s.%s' % (args.user, os.path.splitext(args.student)[0], dataset, args.version)
-    if args.get:
-        if not os.path.isdir(args.dest):
-            sys.exit("destination path %s does not exist" % args.dest)
-        call('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS), shell=True)
-        continue
     inDS = metadata[dataset]['container']
     if os.path.isfile(inDS):
         with open(inDS) as f:
             inDS = [s.strip() for s in f.readlines()]
     if type(inDS) is not list:
         inDS = [inDS]
+    version = args.version
+    if version is None:
+        # take name of first dataset
+        version = inDS[0].strip('/')
+        panda_outDS = 'user.%s.%s.%s' % (args.user, os.path.splitext(args.student)[0], version)
+    else:
+        panda_outDS = 'user.%s.%s.%s.%s' % (args.user, os.path.splitext(args.student)[0], dataset, version)
+    if args.get:
+        if not os.path.isdir(args.dest):
+            sys.exit("destination path %s does not exist" % args.dest)
+        call('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS), shell=True)
+        continue
     for panda_inDS in inDS:
         panda_site = None
         if ':' in panda_inDS:
