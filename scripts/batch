@@ -9,8 +9,10 @@ parser.add_argument('-n',"--nproc", type=int,
                   help="number of students (parallel processes)", default=1)
 parser.add_argument("--grl",
                   help="good runs list", default=None)
-parser.add_argument("--events", type=int, dest="events",
+parser.add_argument("--events", type=int,
                   help="number of events to process", default=-1)
+parser.add_argument("--queue", action='store_true',
+                  help="use queue to feed files to students", default=False)
 parser.add_argument("--random-sample", type=int, dest="rsample",
                   help="specify length of a random sampling of input files to process", default=None)
 parser.add_argument("--nice", type=int, dest="nice",
@@ -125,6 +127,7 @@ for fileset in filesets:
         fileset = fileset,
         nstudents = args.nproc,
         connect_queue = multiprocessing.Queue(-1),
+        queuemode = args.queue,
         grl = args.grl,
         events = args.events,
         nice = args.nice,
