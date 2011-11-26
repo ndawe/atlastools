@@ -98,7 +98,8 @@ if args.grl is None and meta.has_key("grl"):
 supervisor = ATLASSupervisor(
     student = args.student,
     outputname = args.dataset,
-    fileset = fileset,
+    files = fileset.files,
+    metadata = fileset,
     nstudents = 1,
     connect_queue = multiprocessing.Queue(-1),
     gridmode = True,

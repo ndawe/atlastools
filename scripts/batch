@@ -124,7 +124,8 @@ for fileset in filesets:
     supervisor = ATLASSupervisor(
         student = args.student,
         outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
-        fileset = fileset,
+        files = fileset.files,
+        metadata = fileset,
         nstudents = args.nproc,
         connect_queue = multiprocessing.Queue(-1),
         queuemode = args.queue,
