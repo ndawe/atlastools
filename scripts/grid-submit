@@ -7,8 +7,9 @@ parser.add_argument('-m', '--meta', dest='metadata',
                     help='YAML file containing dataset metadata',
                     default='datasets.yml')
 parser.add_argument('-v', '--version',
-                    help='version number/string appended to output dataset name',
-                    default=None)
+                    type=int,
+                    help='output dataset version number',
+                    default=1)
 parser.add_argument('-s', '--student',
                     help='the file (excluding .py extension) containing a '
                          'class of the same name inheriting '
@@ -125,12 +126,9 @@ for dataset in datasets:
     if type(inDS) is not list:
         inDS = [inDS]
     version = args.version
-    if version is None:
-        # take name of first dataset
-        version = inDS[0].strip('/')
-        panda_outDS = 'user.%s.%s.%s' % (args.user, os.path.splitext(args.student)[0], version)
-    else:
-        panda_outDS = 'user.%s.%s.%s.%s' % (args.user, os.path.splitext(args.student)[0], dataset, version)
+    # take name of first dataset
+    ds_name = inDS[0].strip('/').replace('*','_')
+    panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, os.path.splitext(args.student)[0], ds_name, version)
     if args.get:
         if not os.path.isdir(args.dest):
             sys.exit("destination path %s does not exist" % args.dest)
