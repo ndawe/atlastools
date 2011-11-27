@@ -127,7 +127,7 @@ for dataset in datasets:
         inDS = [inDS]
     version = args.version
     # take name of first dataset
-    ds_name = inDS[0].strip('/').replace('*','_')
+    ds_name = inDS[0].strip('/').replace('*','_').replace('merge.NTUP_TAUMEDIUM.','')
     panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, os.path.splitext(args.student)[0], ds_name, version)
     if args.get:
         if not os.path.isdir(args.dest):
