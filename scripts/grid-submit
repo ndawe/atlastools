@@ -128,9 +128,9 @@ for dataset in datasets:
     version = args.version
     # take name of first dataset
     ds_name = inDS[0].strip('/').replace('*','_')
-    if len(ds_name) > 132:
-        ds_name = ds_name.replace('merge.NTUP_TAUMEDIUM.','')
     panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, os.path.splitext(args.student)[0], ds_name, version)
+    if len(panda_outDS) > 132:
+        panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
     if args.get:
         if not os.path.isdir(args.dest):
             sys.exit("destination path %s does not exist" % args.dest)
