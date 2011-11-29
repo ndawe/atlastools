@@ -121,13 +121,14 @@ for sample in args.datasets:
     filesets.append(fileset)
 
 for fileset in filesets:
+    parent_connection, child_connection = multiprocessing.Pipe()
     supervisor = ATLASSupervisor(
         student = args.student,
         outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
         files = fileset.files,
         metadata = fileset,
         nstudents = args.nproc,
-        connect_queue = multiprocessing.Queue(-1),
+        connection = child_connection,
         queuemode = args.queue,
         grl = args.grl,
         events = args.events,
@@ -138,6 +139,6 @@ for fileset in filesets:
         supervisor.join()
     except KeyboardInterrupt, SystemExit:
         print "Cleaning up..."
-        supervisor.connect_queue.put(None)
+        parent_connection.send(None)
         supervisor.join()
         break

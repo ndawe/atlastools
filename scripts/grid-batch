@@ -95,13 +95,15 @@ fileset = Fileset(
 if args.grl is None and meta.has_key("grl"):
     args.grl = meta["grl"]
 
+parent_connection, child_connection = multiprocessing.Pipe()
+
 supervisor = ATLASSupervisor(
     student = args.student,
     outputname = args.dataset,
     files = fileset.files,
     metadata = fileset,
     nstudents = 1,
-    connect_queue = multiprocessing.Queue(-1),
+    connection = child_connection,
     gridmode = True,
     grl = args.grl,
     events = args.events,
@@ -112,5 +114,5 @@ try:
     supervisor.join()
 except KeyboardInterrupt, SystemExit:
     print "Cleaning up..."
-    supervisor.connect_queue.put(None)
+    parent_connection.send(None)
     supervisor.join()
