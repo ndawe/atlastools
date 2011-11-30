@@ -5,7 +5,7 @@ class ATLASSupervisor(Supervisor):
 
     def publish(self, merge=True):
 
-        super(ATLASSupervisor, self).publish(merge, weight = self.fileset.datatype == datasets.MC)
+        super(ATLASSupervisor, self).publish(merge, weight = self.metadata.datatype == datasets.MC)
 
 class ATLASStudent(Student):
 
