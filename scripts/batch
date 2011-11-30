@@ -13,6 +13,8 @@ parser.add_argument("--events", type=int,
                   help="number of events to process", default=-1)
 parser.add_argument("--queue", action='store_true',
                   help="use queue to feed files to students", default=False)
+parser.add_argument("--profile", action='store_true',
+                  help="profile execution time of each student's work method", default=False)
 parser.add_argument("--random-sample", type=int, dest="rsample",
                   help="specify length of a random sampling of input files to process", default=None)
 parser.add_argument("--nice", type=int, dest="nice",
@@ -130,6 +132,7 @@ for fileset in filesets:
         nstudents = args.nproc,
         connection = child_connection,
         queuemode = args.queue,
+        profile = args.profile,
         grl = args.grl,
         events = args.events,
         nice = args.nice,
