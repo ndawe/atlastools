@@ -107,8 +107,18 @@ else:
             print section_string, ' = ', error
         sys.exit(1)
 
+sorted_datasets = sorted(metadata.keys())
+
+# expand globs
+datasets = []
+for dataset in args.datasets:
+    if '*' in dataset:
+        datasets += fnmatch.filter(sorted_datasets, dataset)
+    else:
+        datasets.append(dataset)
+
 filesets = []
-for sample in args.datasets:
+for sample in datasets:
     if not sample in metadata:
         sys.exit("sample %s not defined in metadata %s" % (sample, args.metadata))
     fileset = datasets.get_sample(sample,
