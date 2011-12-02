@@ -120,10 +120,11 @@ for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
     inDS = metadata[dataset]['container']
-    if os.path.isfile(inDS):
-        with open(inDS) as f:
-            inDS = [s.strip() for s in f.readlines()]
-    if type(inDS) is not list:
+    if type(inDS) not in (list, tuple):
+        if os.path.isfile(inDS):
+            with open(inDS) as f:
+                inDS = [s.strip() for s in f.readlines()]
+    if type(inDS) not in (list, tuple):
         inDS = [inDS]
     version = args.version
     # take name of first dataset
