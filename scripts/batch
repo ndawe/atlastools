@@ -42,6 +42,7 @@ from atlastools import datasets
 import multiprocessing
 from configobj import ConfigObj, flatten_errors
 from validate import Validator
+import fnmatch
 
 sys.path.insert(0,'.')
 
