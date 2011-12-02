@@ -111,15 +111,15 @@ else:
 sorted_datasets = sorted(metadata.keys())
 
 # expand globs
-datasets = []
+_datasets = []
 for dataset in args.datasets:
     if '*' in dataset:
-        datasets += fnmatch.filter(sorted_datasets, dataset)
+        _datasets += fnmatch.filter(sorted_datasets, dataset)
     else:
-        datasets.append(dataset)
+        _datasets.append(dataset)
 
 filesets = []
-for sample in datasets:
+for sample in _datasets:
     if not sample in metadata:
         sys.exit("sample %s not defined in metadata %s" % (sample, args.metadata))
     fileset = datasets.get_sample(sample,
