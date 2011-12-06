@@ -126,18 +126,16 @@ for dataset in datasets:
                 inDS = [s.strip() for s in f.readlines()]
     if type(inDS) not in (list, tuple):
         inDS = [inDS]
-    version = args.version
-    # take name of first dataset
-    ds_name = inDS[0].strip('/').replace('*','_')
-    panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, os.path.splitext(args.student)[0], ds_name, version)
-    if len(panda_outDS) > 131:
-        panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
-    if args.get:
-        if not os.path.isdir(args.dest):
-            sys.exit("destination path %s does not exist" % args.dest)
-        call('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS), shell=True)
-        continue
     for panda_inDS in inDS:
+        ds_name = panda_inDS.strip('/').replace('*','_')
+        panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, os.path.splitext(args.student)[0], ds_name, args.version)
+        if len(panda_outDS) > 131:
+            panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
+        if args.get:
+            if not os.path.isdir(args.dest):
+                sys.exit("destination path %s does not exist" % args.dest)
+            call('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS), shell=True)
+            continue
         panda_site = None
         if ':' in panda_inDS:
             panda_inDS, panda_site = panda_inDS.split(':') 
