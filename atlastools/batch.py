@@ -1,11 +1,5 @@
-from . import datasets
-from rootpy.batch import Student, Supervisor
+from rootpy.batch import Student
 
-class ATLASSupervisor(Supervisor):
-
-    def publish(self, merge=True):
-
-        super(ATLASSupervisor, self).publish(merge, weight = self.metadata.datatype == datasets.MC)
 
 class ATLASStudent(Student):
 
