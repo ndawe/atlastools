@@ -208,7 +208,19 @@ build-packages)
     fi
     export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
-
+    
+    if [[ -f deps/dependencies ]]
+    then
+        cd deps
+        for file in `cat dependencies`;
+        do
+            tar -zxvf ${file}.tar.gz
+            cd ${file}
+            python setup.py install --user
+            cd ..
+        done
+        cd ${BASE}
+    fi
     for package in ${packages}
     do
         install_python_package ${package}
