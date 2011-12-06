@@ -1,4 +1,7 @@
-from rootpy.batch import Student
+from rootpy.batch import Student, Supervisor
+
+
+class ATLASSupervisor(Supervisor): pass
 
 
 class ATLASStudent(Student):
