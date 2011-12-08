@@ -124,6 +124,7 @@ for dataset in datasets:
         if os.path.isfile(inDS):
             with open(inDS) as f:
                 inDS = [s.strip() for s in f.readlines()]
+                inDS = [s for s in inDS if not s.startswith('#')]
     if type(inDS) not in (list, tuple):
         inDS = [inDS]
     for panda_inDS in inDS:
