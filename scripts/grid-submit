@@ -35,14 +35,15 @@ import yaml
 from configobj import ConfigObj, flatten_errors
 from validate import Validator
 import sys
-from subprocess import call
 import fnmatch
 import os
 from glob import glob
 import subprocess
+import shlex
 import tarfile
 import uuid
 import time
+from cStringIO import StringIO
 
 
 if args.metadata.endswith('.yml'):
@@ -191,12 +192,16 @@ for dataset in datasets:
                 command += ' %s' % ' '.join(user_args)
             commands.append(command)
         
-def run(command):
+def run(command, queue):
 
-    print "executing:"
-    print command
-
-    call(command, shell=True)
+    output = StringIO()
+    print >> output, "executing:"
+    print >> output, command
+    args = shlex.split(command)
+    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = p.communicate()
+    print >> output, stdout
+    queue.put(output.getvalue())
 
 if args.get:
     print "Will get %i output datasets..." % len(commands)
@@ -204,16 +209,18 @@ else:
     print "Will submit %i jobs..." % len(commands)
 
 processes = []
+output_queue = multiprocessing.Queue()
 while True:
     active = multiprocessing.active_children()
     while len(active) < args.nproc and len(commands) > 0:
-        p = multiprocessing.Process(args=(commands.pop(),), target=run)
+        p = multiprocessing.Process(args=(commands.pop(), output_queue), target=run)
         p.start()
         processes.append(p)
         active = multiprocessing.active_children()
-    print time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
-    print "%i jobs submitting and %i queued" % (len(active), len(commands))
-    print "--"
+    while not output_queue.empty():
+        print time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime())
+        print "%i jobs submitting and %i queued" % (len(active), len(commands))
+        print output_queue.get()
     if len(commands) == 0 and len(active) == 0:
         break
     time.sleep(1)
