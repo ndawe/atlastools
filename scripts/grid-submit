@@ -131,8 +131,8 @@ for dirpath, dirnames, filenames in os.walk('.'):
             tar_files.append(fullpath)
 
 # create tar file of PWD
-tar_name = '%s.tar' % uuid.uuid4().hex
-with tarfile.open(tar_name, 'w') as tar:
+tar_name = '%s.tar.gz' % uuid.uuid4().hex
+with tarfile.open(tar_name, 'w:gz') as tar:
     for name in tar_files:
         tar.add(name)
 
