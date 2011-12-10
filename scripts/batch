@@ -26,7 +26,8 @@ parser.add_argument('-r',"--runs",
 parser.add_argument("--suffix",
                   help="suffix appended to sample name", default=None)
 parser.add_argument('-s',"--student",
-                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+                  help="the file (excluding .py extension) containing a "
+                       "class of the same name inheriting from rootpy.batch.Student", required=True)
 parser.add_argument('-m',"--metadata",
                   help="dataset metadata in YAML format", default="datasets.yml")
 parser.add_argument('datasets', nargs='+')

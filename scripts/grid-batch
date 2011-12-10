@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 
-parser = ArgumentParser(usage="%prog [args] file1,file2,file3...")
+parser = ArgumentParser(usage="%(prog)s [args] file1,file2,file3...")
 parser.add_argument("-v","--verbose", action="store_true",
                   help="verbose", default=False)
 parser.add_argument("--grl",
@@ -10,11 +10,12 @@ parser.add_argument("--grl",
 parser.add_argument("--events", type=int,
                   help="number of events to process", default=-1)
 parser.add_argument("--dataset",
-                  help="name of dataset being processed", default=None)
+                  help="name of dataset being processed", required=True)
 parser.add_argument("--metadata",
-                  help="YAML file containing dataset definitions", default="datasets.yml")
+                  help="YAML file containing dataset definitions", required=True)
 parser.add_argument('-s',"--student",
-                  help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
+                  help="the file (excluding .py extension) containing a"
+                       "class of the same name inheriting from rootpy.batch.Student", required=True)
 parser.add_argument('files', nargs='+')
 args, user_args = parser.parse_known_args()
 
@@ -32,15 +33,6 @@ from configobj import ConfigObj, flatten_errors
 from validate import Validator
 
 sys.path.insert(0,'.')
-
-if not args.student:
-    sys.exit("Student file not specified!")
-
-if not args.dataset:
-    sys.exit("dataset name not specified!")
-
-if not args.metadata:
-    sys.exit("metadata file not specified!")
 
 files = []
 for path in args.files:
