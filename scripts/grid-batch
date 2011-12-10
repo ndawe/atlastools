@@ -15,7 +15,7 @@ parser.add_argument("--metadata",
                   help="YAML file containing dataset definitions", default="datasets.yml")
 parser.add_argument('-s',"--student",
                   help="the file (excluding .py extension) containing a class of the same name inheriting from rootpy.batch.Student", default=None)
-parser.add_argument('files', nargs='?')
+parser.add_argument('files', nargs='+')
 args, user_args = parser.parse_known_args()
 
 import sys
@@ -42,13 +42,13 @@ if not args.dataset:
 if not args.metadata:
     sys.exit("metadata file not specified!")
 
-if os.path.isdir(args.files):
-    args.files = utils.all_files_matching(args.files, '*.root*')
-else:
-    args.files = args.files.split(',')
-if len(args.files) == 0:
-    print "No input files specified!"
-    sys.exit(1)
+files = []
+for path in args.files:
+    if os.path.isdir(path):
+        files += utils.all_files_matching(path, '*.root*')
+    else:
+        files += path.split(',')
+args.files = files
 
 if args.metadata.endswith('.yml'):
     with open(args.metadata, 'r') as configfile:
