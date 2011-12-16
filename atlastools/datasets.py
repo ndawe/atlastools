@@ -7,6 +7,10 @@ import fnmatch
 from atlastools import runperiods
 from rootpy.data.dataset import Fileset
 import random
+from collections import namedtuple
+
+
+ATLASFileset = namedtuple('ATLASFileset', Fileset._fields + ('grl',))
 
 
 mcpattern = re.compile("^(optimized.)?group(?P<year>[0-9]{2}).(?P<group>[^.]+).mc(?P<prodyear>[0-9]{2})[_]?(?P<energy>[0-9]{1,2})(TeV)?.(?P<run>[0-9]+).(?P<name>).(?P<tag>[^.]+).(?P<suffix>.+)$")
@@ -66,7 +70,7 @@ def get_sample(name, metadata, runs = None, periods = None, random_sample = None
         labelname = meta['label']
     except:
         print "Could not parse metadata!"
-        return None 
+        return None
     """
 
     datatype = metadata.get('type')
@@ -76,7 +80,7 @@ def get_sample(name, metadata, runs = None, periods = None, random_sample = None
     weight = metadata.get('weight')
     if type(weight) is str:
         weight = float(eval(weight))
-    
+
     if not classes.has_key(classname):
         print "Class %s is not defined!"%classname
         if len(classes) > 0:
@@ -136,7 +140,7 @@ def get_sample(name, metadata, runs = None, periods = None, random_sample = None
             if not match:
                 print "Warning: directory %s is not a valid dataset name!"%datasetname
             else:
-                
+
                 #versions[match.group('version')] = None
                 runnumber = int(match.group('run'))
                 if selected_runs:
@@ -171,7 +175,8 @@ def get_sample(name, metadata, runs = None, periods = None, random_sample = None
             ///
             files += glob.glob(os.path.join(dir,'*root*'))
     """
-    return Fileset(
+    grl = metadata.get('grl', None)
+    return ATLASFileset(
             name = name,
             title = labeltype,
             label = None,
@@ -180,6 +185,7 @@ def get_sample(name, metadata, runs = None, periods = None, random_sample = None
             treename = treename,
             weight = weight,
             files = files,
+            grl = grl,
             tags = None,
             meta = None,
             properties = None

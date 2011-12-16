@@ -7,8 +7,6 @@ parser.add_argument("-v","--verbose", action="store_true",
                   help="verbose", default=False)
 parser.add_argument('-n',"--nproc", type=int,
                   help="number of students (parallel processes)", default=1)
-parser.add_argument("--grl",
-                  help="good runs list", default=None)
 parser.add_argument("--events", type=int,
                   help="number of events to process", default=-1)
 parser.add_argument("--queue", action='store_true',
@@ -89,7 +87,7 @@ if args.metadata.endswith('.yml'):
     with open(args.metadata, 'r') as configfile:
         metadata = yaml.load(configfile)
 else:
-    configspec = os.path.splitext(args.metadata)[0]+'.spec'
+    configspec = os.path.splitext(args.metadata)[0] + '.spec'
     if not os.path.isfile(configspec):
         sys.exit('%s does not exist' % configspec)
     metadata = ConfigObj(args.metadata, configspec=configspec)
@@ -121,31 +119,32 @@ for dataset in args.datasets:
 
 filesets = []
 for sample in _datasets:
-    if not sample in metadata:
+    if sample not in metadata:
         sys.exit("sample %s not defined in metadata %s" % (sample, args.metadata))
+    meta = metadata[sample]
     fileset = datasets.get_sample(sample,
-                                  metadata[sample],
+                                  meta,
                                   periods = args.periods,
                                   runs = args.runs,
                                   random_sample = args.rsample)
     if not fileset:
-        print "FATAL: sample %s does not exist!"%sample
+        print "FATAL: sample %s does not exist!" % sample
         sys.exit(1)
-    print "processing %s..."%fileset.name
+    print "processing %s..." % fileset.name
     filesets.append(fileset)
 
 for fileset in filesets:
     parent_connection, child_connection = multiprocessing.Pipe()
     supervisor = ATLASSupervisor(
         student = args.student,
-        outputname = "_".join([fileset.name, args.suffix]) if args.suffix else fileset.name,
+        outputname = '_'.join([fileset.name, args.suffix]) if args.suffix else fileset.name,
         files = fileset.files,
         metadata = fileset,
         nstudents = args.nproc,
         connection = child_connection,
         queuemode = args.queue,
         profile = args.profile,
-        grl = args.grl,
+        grl = fileset.grl,
         events = args.events,
         nice = args.nice,
         options = user_args)

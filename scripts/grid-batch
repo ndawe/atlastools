@@ -3,17 +3,15 @@
 from argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [args] file1,file2,file3...")
-parser.add_argument("-v","--verbose", action="store_true",
+parser.add_argument('-v', '--verbose', action="store_true",
                   help="verbose", default=False)
-parser.add_argument("--grl",
-                  help="good runs list", default=None)
-parser.add_argument("--events", type=int,
+parser.add_argument('-e', '--events', type=int,
                   help="number of events to process", default=-1)
-parser.add_argument("--dataset",
+parser.add_argument('-d', '--dataset',
                   help="name of dataset being processed", required=True)
-parser.add_argument("--metadata",
+parser.add_argument('-m', '--metadata',
                   help="YAML file containing dataset definitions", required=True)
-parser.add_argument('-s',"--student",
+parser.add_argument('-s', '--student',
                   help="the file (excluding .py extension) containing a"
                        "class of the same name inheriting from rootpy.batch.Student", required=True)
 parser.add_argument('files', nargs='+')
@@ -25,8 +23,8 @@ import ROOT
 import glob
 from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
+from atlastools.datasets import ATLASFileset
 from atlastools import utils
-from rootpy.data.dataset import Fileset
 import multiprocessing
 import yaml
 from configobj import ConfigObj, flatten_errors
@@ -66,11 +64,11 @@ else:
             print section_string, ' = ', error
         sys.exit(1)
 
-meta = metadata.get(args.dataset, None)
-if not meta:
-    sys.exit("dataset %s not defined in metadata!"% args.dataset)
+if args.dataset not in metadata:
+    sys.exit("dataset %s not defined in metadata!" % args.dataset)
+meta = metadata[args.dataset]
 
-fileset = Fileset(
+fileset = ATLASFileset(
     name = args.dataset,
     title = datasets.labels[meta["label"]],
     label = None,
@@ -79,13 +77,14 @@ fileset = Fileset(
     treename = meta["tree"],
     weight = meta["weight"],
     files = args.files,
+    grl = meta.get('grl', None),
     tags = None,
     meta = None,
     properties = None
 )
 
-if args.grl is None and meta.has_key("grl"):
-    args.grl = meta["grl"]
+for key, value in meta.items():
+    print '%s = %s' % (key, value)
 
 parent_connection, child_connection = multiprocessing.Pipe()
 
@@ -97,7 +96,7 @@ supervisor = ATLASSupervisor(
     nstudents = 1,
     connection = child_connection,
     gridmode = True,
-    grl = args.grl,
+    grl = fileset.grl,
     events = args.events,
     options = user_args)
 
