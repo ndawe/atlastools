@@ -33,7 +33,6 @@ args, user_args = parser.parse_known_args()
 
 import sys
 import os
-import ROOT
 import glob
 import yaml
 from atlastools.batch import ATLASSupervisor
