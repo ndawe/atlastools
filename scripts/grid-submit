@@ -44,7 +44,7 @@ import tarfile
 import uuid
 import time
 from cStringIO import StringIO
-
+from contextlib import closing
 
 if args.metadata.endswith('.yml'):
     with open(args.metadata, 'r') as configfile:
@@ -150,7 +150,7 @@ for dirpath, dirnames, filenames in os.walk('.'):
 
 # create tar file of PWD
 tar_name = '%s.tar.gz' % uuid.uuid4().hex
-with tarfile.open(tar_name, 'w:gz') as tar:
+with closing(tarfile.open(tar_name, 'w:gz')) as tar:
     for name in tar_files:
         tar.add(name)
 
