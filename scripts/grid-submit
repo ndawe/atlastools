@@ -45,6 +45,7 @@ import uuid
 import time
 from cStringIO import StringIO
 from contextlib import closing
+import commands
 
 if args.metadata.endswith('.yml'):
     with open(args.metadata, 'r') as configfile:
@@ -82,6 +83,11 @@ for dataset in args.datasets:
 
 if not args.get:
     
+    # check for panda client
+    status, result = commands.getstatusoutput('prun')
+    if 'command not found' in result:
+        sys.exit('pandaclient is not setup and prun is not in PATH. '
+                 'Please setup pandaclient first.')
     import pkg_resources
     import shutil
     import stat
