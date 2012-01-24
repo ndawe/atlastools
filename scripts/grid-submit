@@ -46,6 +46,8 @@ import time
 from cStringIO import StringIO
 from contextlib import closing
 import commands
+import atexit
+
 
 if args.metadata.endswith('.yml'):
     with open(args.metadata, 'r') as configfile:
@@ -160,6 +162,13 @@ with closing(tarfile.open(tar_name, 'w:gz')) as tar:
     for name in tar_files:
         tar.add(name)
 
+@atexit.register
+def cleanup():
+
+    if not args.get:
+        subprocess.call('./grid-setup.sh clean', shell=True)
+    os.unlink(tar_name)
+
 # remove possible .py extension
 args.student = os.path.splitext(args.student)[0]
 
@@ -247,7 +256,3 @@ while True:
     if len(commands) == 0 and len(active) == 0:
         break
     time.sleep(1)
-
-if not args.get:
-    subprocess.call('./grid-setup.sh clean', shell=True)
-os.unlink(tar_name)
