@@ -9,8 +9,9 @@ from glob import glob
 
 from distutils.core import Extension
 
-jet_cleaning = Extension('atlastools/jets/cleaning',
-                    sources = ['atlastools/jets/_cleaning.cpp'])
+jet_cleaning = Extension('atlastools/jets/_libcleaning',
+                    sources = ['atlastools/jets/_libcleaning.cpp',
+                               'atlastools/jets/_cleaning.cpp'])
 
 setup(name='atlastools',
       version=pkginfo.__RELEASE__,

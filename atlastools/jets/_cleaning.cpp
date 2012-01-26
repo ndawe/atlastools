@@ -1,12 +1,5 @@
+#include "_cleaning.h"
 #include <math.h>
-
-enum LEVEL
-{
-	LooseMinusBad = 0,
-	LooseBad = 1,
-	MediumBad = 2,
-	TightBad = 3
-};
 
 
 bool is_bad(LEVEL criteria,

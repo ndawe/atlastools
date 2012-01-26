@@ -1,4 +1,4 @@
-from ._cleaning import is_bad as _is_bad
+from . import _libcleaning
 
 LOOSER,\
 LOOSE,\
@@ -11,7 +11,7 @@ def is_bad(level,
 	time,    fmax,
 	eta,     chf ,
     HecQ,    LArQmean ):
-    return _is_bad(level,
+    return _libcleaning._is_bad(level,
         quality, NegE,
         emf,     hecf,
         time,    fmax,
