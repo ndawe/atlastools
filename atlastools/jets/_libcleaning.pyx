@@ -2,27 +2,27 @@ from cpython cimport bool
 
 cdef extern from "_cleaning.h":
         
-        enum LEVEL:
-            LooseMinusBad
-            LooseBad
-            MediumBad
-            TightBad
+        enum BADLEVEL:
+            LooseMinusBad = 0,
+            LooseBad = 1,
+            MediumBad = 2,
+            TightBad = 3
 
-        bool is_bad(LEVEL criteria,
+        bint is_bad_jet(BADLEVEL criteria,
             double quality, double NegE,
             double emf,     double hecf,
             double time,    double fmax,
             double eta,     double chf ,
             double HecQ,    double LArQmean )
 
-def _is_bad(criteria,
+def is_bad_jet_(criteria,
              quality, NegE,
              emf,     hecf,
              time,    fmax,
              eta,     chf ,
              HecQ,    LArQmean ):
     
-    return is_bad(criteria,
+    return is_bad_jet(criteria,
             quality, NegE,
             emf,     hecf,
             time,    fmax,

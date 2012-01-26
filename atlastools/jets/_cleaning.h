@@ -1,7 +1,7 @@
 #ifndef CLEANING
 #define CLEANING
 
-enum LEVEL
+enum BADLEVEL
 {
 	LooseMinusBad = 0,
 	LooseBad = 1,
@@ -9,7 +9,7 @@ enum LEVEL
 	TightBad = 3
 };
 
-bool is_bad(LEVEL criteria,
+bool is_bad_jet(BADLEVEL criteria,
 	double quality, double NegE,
 	double emf,     double hecf,
 	double time,    double fmax,

@@ -2,7 +2,7 @@
 #include <math.h>
 
 
-bool is_bad(LEVEL criteria,
+bool is_bad_jet(BADLEVEL criteria,
 	double quality, double NegE,
 	double emf,     double hecf,
 	double time,    double fmax,

@@ -11,7 +11,7 @@ def is_bad(level,
 	time,    fmax,
 	eta,     chf ,
     HecQ,    LArQmean ):
-    return _libcleaning._is_bad(level,
+    return _libcleaning.is_bad_jet_(level,
         quality, NegE,
         emf,     hecf,
         time,    fmax,
