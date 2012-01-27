@@ -7,11 +7,6 @@ from atlastools import pkginfo
 from setuptools import setup, find_packages
 from glob import glob
 
-from distutils.core import Extension
-
-jet_cleaning = Extension('atlastools/jets/_libcleaning',
-                    sources = ['atlastools/jets/_libcleaning.cpp',
-                               'atlastools/jets/_cleaning.cpp'])
 
 setup(name='atlastools',
       version=pkginfo.__RELEASE__,
@@ -24,5 +19,4 @@ setup(name='atlastools',
       zip_safe=False,
       scripts=glob('scripts/*') + ['atlastools/etc/grid-setup.sh'],
       package_data={'': ['etc/*']},
-      ext_modules = [jet_cleaning]
      )
