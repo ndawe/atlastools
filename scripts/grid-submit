@@ -28,6 +28,8 @@ parser.add_argument('-d', '--dest', default='.',
                     help='directory in which to download the datasets')
 parser.add_argument('--merge', action='store_true',
                   help='merge outputs on the grid')
+parser.add_argument('-f', '--filter', default=None,
+                    help='only submit jobs on datasets matching this glob')
 parser.add_argument('datasets', nargs="+")
 args, user_args = parser.parse_known_args()
 
@@ -73,16 +75,6 @@ else:
             print section_string, ' = ', error
         sys.exit(1)
 
-sorted_datasets = sorted(metadata.keys())
-
-# expand globs
-datasets = []
-for dataset in args.datasets:
-    if '*' in dataset:
-        datasets += fnmatch.filter(sorted_datasets, dataset)
-    else:
-        datasets.append(dataset)
-
 if not args.get:
     
     # check for panda client
@@ -100,6 +92,16 @@ if not args.get:
     os.chmod(filename, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR |\
                        stat.S_IRGRP | stat.S_IROTH)
     subprocess.call('./%s local' % filename, shell=True)
+
+sorted_datasets = sorted(metadata.keys())
+
+# expand globs
+datasets = []
+for dataset in args.datasets:
+    if '*' in dataset:
+        datasets += fnmatch.filter(sorted_datasets, dataset)
+    else:
+        datasets.append(dataset)
 
 print "tarring up current directory..."
 print "ignoring files/directories matching pattern in panda.ignore"
@@ -184,6 +186,8 @@ for dataset in datasets:
                 inDS = [s for s in inDS if not s.startswith('#')]
     if type(inDS) not in (list, tuple):
         inDS = [inDS]
+    if args.filter is not None:
+        inDS = fnmatch.filter(inDS, args.filter)
     for panda_inDS in inDS:
         ds_name = panda_inDS.strip('/').replace('*','_')
         panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
