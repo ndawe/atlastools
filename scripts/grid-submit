@@ -208,7 +208,7 @@ for dataset in datasets:
                          'python ./user-python/bin/grid-batch --dataset %s ' \
                          '--metadata %s --student %s %%IN' % \
                          (dataset, args.metadata, args.student)
-            panda_outputs = '%s.%s.root,cutflow.p' % (args.student, dataset)
+            panda_outputs = '%s.%s.root' % (args.student, dataset)
             command = [
                 'prun',
                 '--bexec "%s"' % panda_bexec,
