@@ -208,6 +208,7 @@ build-packages)
     fi
     export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
+    export ROOTPY_NO_EXT=1
     
     if [[ -f deps/dependencies ]]
     then
