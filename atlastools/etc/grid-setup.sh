@@ -2,7 +2,7 @@
 # Author: Noel Dawe
 
 function print_help() {
-    echo "Usage : $0 [clean|local|build-root-python|build-packages|worker]"
+    echo "Usage : $0 [clean|local|unpack-packages|build-root-python|build-packages|worker]"
     exit
 }
 
@@ -26,6 +26,7 @@ use_precompiled_python=true
 use_precompiled_root=true
 
 function download_from_github() {
+    cd ${BASE}
     PACKAGE=${1}
     if [[ ! -e ${PACKAGE}.tar.gz ]]
     then
@@ -37,7 +38,7 @@ function download_from_github() {
     fi
 }
 
-function install_python_package() {
+function unpack_python_package() {
     cd ${BASE}
     PACKAGE=${1}
     if [[ ! -e ${PACKAGE} ]]
@@ -46,25 +47,30 @@ function install_python_package() {
         then
             rm -f ${PACKAGE}.tar.gz
             mv ${GIT_USER}-${PACKAGE}-* ${PACKAGE}
-            if [[ -d ${PACKAGE} ]]
-            then
-                echo "Installing ${PACKAGE}..."
-                cd ${PACKAGE}
-                #echo ">>> lib dirs: ${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64"
-                #echo ">>> include dirs: ${RPM_INCLUDE}"
-                #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
-                #python setup.py build -e "/usr/bin/env python"
-                #python setup.py setopt --command build_ext --option library-dirs --set-value ${PYTHON_LIB}
-                if ! python setup.py install --user
-                then
-                    echo "Failed to install package ${PACKAGE}"
-                    exit 1
-                fi
-                cd ..
-            fi
         else
             exit 1
         fi
+    fi
+}
+
+function install_python_package() {
+    cd ${BASE}
+    PACKAGE=${1}
+    if [[ -d ${PACKAGE} ]]
+    then
+        echo "Installing ${PACKAGE}..."
+        cd ${PACKAGE}
+        #echo ">>> lib dirs: ${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64"
+        #echo ">>> include dirs: ${RPM_INCLUDE}"
+        #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
+        #python setup.py build -e "/usr/bin/env python"
+        #python setup.py setopt --command build_ext --option library-dirs --set-value ${PYTHON_LIB}
+        if ! python setup.py install --user
+        then
+            echo "Failed to install package ${PACKAGE}"
+            exit 1
+        fi
+        cd ..
     fi
 }
 
@@ -193,6 +199,14 @@ build-root-python)
     setup_root
     ;;
 
+unpack-packages)
+    
+    for package in ${packages}
+    do 
+        unpack_python_package ${package}
+    done
+    ;;
+
 build-packages)
     
     python_version=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
@@ -224,6 +238,7 @@ build-packages)
     fi
     for package in ${packages}
     do
+        unpack_python_package ${package}
         install_python_package ${package}
     done
     ;;
