@@ -2,7 +2,7 @@
 # Author: Noel Dawe
 
 function print_help() {
-    echo "Usage : $0 [clean|local|unpack-packages|build-root-python|build-packages|worker]"
+    echo "Usage : $0 [clean|local|unpack|build-root-python|build-packages|worker]"
     exit
 }
 
@@ -199,7 +199,7 @@ build-root-python)
     setup_root
     ;;
 
-unpack-packages)
+unpack)
     
     for package in ${packages}
     do 
