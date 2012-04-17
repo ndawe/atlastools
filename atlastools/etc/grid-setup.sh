@@ -256,6 +256,12 @@ worker)
     export PYTHONUSERBASE=${BASE}/user-python
     export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
     export ROOTPY_GRIDMODE=true
+
+    # source user setup script
+    if [[ -f grid.setup ]]
+    then
+        source grid.setup
+    fi
     ;;
 
 *)
