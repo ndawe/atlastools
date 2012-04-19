@@ -2,7 +2,7 @@
 # Author: Noel Dawe
 
 function print_help() {
-    echo "Usage : $0 [clean|local|unpack|build-root-python|build-packages|worker]"
+    echo "Usage : $0 [clean|local|unpack|build-root-python|build|worker]"
     exit
 }
 
@@ -12,7 +12,7 @@ then
 fi
 
 BASE=${PWD}
-
+github_deps=deps/packages.github
 repo='http://linuxsoft.cern.ch/cern/slc5X/updates/x86_64/RPMS/'
 
 PYTHON_VERS_MAJOR=2.7
@@ -112,14 +112,8 @@ case "${1}" in
 clean)
 
     echo "Cleaning up..."
-    rm -rf cython
-    rm -rf lxml
-    rm -rf yaml
-    rm -rf python
-    rm -rf root
-    rm -rf rpmroot
-    
-    if [[ -f deps/packages.github ]]
+    rm -rf user-python 
+    if [[ -f ${github_deps} ]]
     then
         while read line
         do
@@ -127,18 +121,18 @@ clean)
             package=${line[1]}
             rm -rf ${package}
             rm -f ${package}.tar.gz
-        done < deps/packages.github
+        done < ${github_deps}
     fi
     ;;
 
 local)
     
-    if [[ -f deps/packages.github ]]
+    if [[ -f ${github_deps} ]]
     then
         while read line
         do
             download_from_github $line
-        done < deps/packages.github
+        done < ${github_deps}
     fi
     ;;
 
@@ -209,16 +203,16 @@ build-root-python)
 
 unpack)
     
-    if [[ -f deps/packages.github ]]
+    if [[ -f ${github_deps} ]]
     then
         while read line
         do 
             unpack_github_tarball $line
-        done < deps/packages.github
+        done < ${github_deps}
     fi
     ;;
 
-build-packages)
+build)
     
     python_version=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
     PYTHON_LIB=`python -c "import distutils.sysconfig; import os; print os.path.dirname(distutils.sysconfig.get_python_lib(standard_lib=True))"`
@@ -247,14 +241,14 @@ build-packages)
         done < dependencies
         cd ${BASE}
     fi
-    if [[ -f deps/packages.github ]]
+    if [[ -f ${github_deps} ]]
     then
         while read line
         do 
             unpack_github_tarball $line
             line=($line)
             install_python_package ${line[1]}
-        done < deps/packages.github
+        done < ${github_deps}
     fi
     ;;
 
