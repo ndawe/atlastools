@@ -13,24 +13,23 @@ fi
 
 BASE=${PWD}
 
-packages='rootpy goodruns atlastools'
-
 repo='http://linuxsoft.cern.ch/cern/slc5X/updates/x86_64/RPMS/'
-GIT_USER=ndawe
 
 PYTHON_VERS_MAJOR=2.7
 PYTHON_VERS=2.7.2
-ROOT_VERS=5.30.00
+ROOT_VERS=5.32.00
 
 use_precompiled_python=true
 use_precompiled_root=true
 
 function download_from_github() {
     cd ${BASE}
-    PACKAGE=${1}
+    GIT_USER=${1}
+    PACKAGE=${2}
+    TAG=${3}
     if [[ ! -e ${PACKAGE}.tar.gz ]]
     then
-        if ! wget --no-check-certificate -O ${PACKAGE}.tar.gz https://github.com/${GIT_USER}/${PACKAGE}/tarball/master
+        if ! wget --no-check-certificate -O ${PACKAGE}.tar.gz https://github.com/${GIT_USER}/${PACKAGE}/tarball/${TAG}
         then
             echo "Failed to download package ${PACKAGE} from github"
             exit 1
@@ -38,9 +37,10 @@ function download_from_github() {
     fi
 }
 
-function unpack_python_package() {
+function unpack_github_tarball() {
     cd ${BASE}
-    PACKAGE=${1}
+    GIT_USER=${1}
+    PACKAGE=${2}
     if [[ ! -e ${PACKAGE} ]]
     then
         if tar -pzxf ${PACKAGE}.tar.gz
@@ -119,19 +119,27 @@ clean)
     rm -rf root
     rm -rf rpmroot
     
-    for package in ${packages}
-    do
-        rm -rf ${package}
-        rm -f ${package}.tar.gz
-    done
+    if [[ -f deps/packages.github ]]
+    then
+        while read line
+        do
+            line=($line)
+            package=${line[1]}
+            rm -rf ${package}
+            rm -f ${package}.tar.gz
+        done < deps/packages.github
+    fi
     ;;
 
 local)
-
-    for package in ${packages}
-    do
-        download_from_github ${package}
-    done
+    
+    if [[ -f deps/packages.github ]]
+    then
+        while read line
+        do
+            download_from_github $line
+        done < deps/packages.github
+    fi
     ;;
 
 build-root-python)
@@ -201,10 +209,13 @@ build-root-python)
 
 unpack)
     
-    for package in ${packages}
-    do 
-        unpack_python_package ${package}
-    done
+    if [[ -f deps/packages.github ]]
+    then
+        while read line
+        do 
+            unpack_github_tarball $line
+        done < deps/packages.github
+    fi
     ;;
 
 build-packages)
@@ -227,20 +238,24 @@ build-packages)
     if [[ -f deps/dependencies ]]
     then
         cd deps
-        for file in `cat dependencies`;
+        while read file
         do
             tar -zxvf ${file}.tar.gz
             cd ${file}
             python setup.py install --user
             cd ..
-        done
+        done < dependencies
         cd ${BASE}
     fi
-    for package in ${packages}
-    do
-        unpack_python_package ${package}
-        install_python_package ${package}
-    done
+    if [[ -f deps/packages.github ]]
+    then
+        while read line
+        do 
+            unpack_github_tarball $line
+            line=($line)
+            install_python_package ${line[1]}
+        done < deps/packages.github
+    fi
     ;;
 
 worker)

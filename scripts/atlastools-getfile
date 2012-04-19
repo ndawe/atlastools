@@ -16,3 +16,6 @@ if not os.path.exists(filename):
                            stat.S_IRGRP | stat.S_IROTH)
     except IOError, e:
         sys.exit(e)
+else:
+    sys.exit("Not copying %s from atlastools since %s already exists" %
+            (filename, filename))
