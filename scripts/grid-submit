@@ -22,6 +22,8 @@ parser.add_argument('-u', '--user',
                     required=True)
 parser.add_argument('--nosite', action='store_true',
                     help='override site in metadata and let the grid decide')
+parser.add_argument('-o', '--outputs',
+                    help='extra output files separated by ","')
 parser.add_argument('-g', '--get', action='store_true',
                   help='download datasets')
 parser.add_argument('-d', '--dest', default='.',
@@ -209,6 +211,8 @@ for dataset in datasets:
                          '--metadata %s --student %s %%IN' % \
                          (dataset, args.metadata, args.student)
             panda_outputs = '%s.%s.root' % (args.student, dataset)
+            if args.outputs is not None:
+                panda_outputs = ','.join([panda_outputs, args.outputs])
             command = [
                 'prun',
                 '--bexec "%s"' % panda_bexec,
