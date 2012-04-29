@@ -30,6 +30,8 @@ parser.add_argument('-d', '--dest', default='.',
                     help='directory in which to download the datasets')
 parser.add_argument('--merge', action='store_true',
                   help='merge outputs on the grid')
+parser.add_argument('--test', action='store_true',
+                  help='only submit one job as a test')
 parser.add_argument('-f', '--filter', default=None,
                     help='only submit jobs on datasets matching this glob')
 parser.add_argument('datasets', nargs="+")
@@ -195,6 +197,8 @@ for dataset in datasets:
         panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
         if len(panda_outDS) > 131:
             panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
+        if args.test:
+            panda_outDS += '_test'
         if args.get:
             if not os.path.isdir(args.dest):
                 sys.exit("destination path %s does not exist" % args.dest)
@@ -231,7 +235,12 @@ for dataset in datasets:
             if user_args:
                 command += ' %s' % ' '.join(user_args)
             commands.append(command)
-        
+            if args.test:
+                break
+    if args.test:
+        break
+   
+
 def run(command, queue):
 
     output = StringIO()
