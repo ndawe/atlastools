@@ -10,7 +10,7 @@ import random
 from collections import namedtuple
 
 
-ATLASFileset = namedtuple('ATLASFileset', Fileset._fields + ('grl',))
+ATLASFileset = namedtuple('ATLASFileset', Fileset._fields + ('year', 'grl',))
 
 
 mcpattern = re.compile("^(optimized.)?group(?P<year>[0-9]{2}).(?P<group>[^.]+).mc(?P<prodyear>[0-9]{2})[_]?(?P<energy>[0-9]{1,2})(TeV)?.(?P<run>[0-9]+).(?P<name>).(?P<tag>[^.]+).(?P<suffix>.+)$")
