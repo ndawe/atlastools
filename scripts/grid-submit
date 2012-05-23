@@ -194,9 +194,10 @@ for dataset in datasets:
         inDS = fnmatch.filter(inDS, args.filter)
     for panda_inDS in inDS:
         ds_name = panda_inDS.strip('/').replace('*','_')
+        if ds_name.startswith('user.%s.' % args.user):
+            ds_name = ds_name[len('user.%s.' % args.user):]
         panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
-        if len(panda_outDS) > 131:
-            panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
+        panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
             panda_outDS += '_test'
         if args.get:
