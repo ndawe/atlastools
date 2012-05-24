@@ -259,6 +259,11 @@ build)
             install_python_package ${line[1]}
         done < ${github_deps}
     fi
+    # source user build script
+    if [[ -f grid.build ]]
+    then
+        source grid.build
+    fi
     ;;
 
 worker)
