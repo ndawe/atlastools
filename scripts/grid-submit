@@ -97,6 +97,78 @@ if not args.get:
                        stat.S_IRGRP | stat.S_IROTH)
     subprocess.call('./%s local' % filename, shell=True)
 
+    print "tarring up current directory..."
+    print "ignoring files/directories matching pattern in panda.ignore"
+    ignore_files = [] 
+    if os.path.isfile('panda.ignore'):
+        with open('panda.ignore') as f:
+            ignore_files = [os.path.normpath(line.strip()) for line in f.readlines()]
+
+    print "overriding any ignored files/directories if matching pattern in panda.include" 
+    include_files = []
+    if os.path.isfile('panda.include'):
+        with open('panda.include') as f:
+            include_files = [os.path.normpath(line.strip()) for line in f.readlines()]
+
+    # determine which files to include in tar
+    tar_files = []
+    for dirpath, dirnames, filenames in os.walk('.'):
+        ignore_dirs = []
+        for dirname in dirnames:
+            fullpath = os.path.normpath(os.path.join(dirpath, dirname))
+            include = True
+            for pattern in ignore_files:
+                if fnmatch.fnmatch(fullpath, pattern):
+                    include = False
+                    break
+            # include_files will override ignore_files
+            if not include:
+                for pattern in include_files:
+                    if fnmatch.fnmatch(fullpath, pattern):
+                        include = True
+                        break
+            if not include:
+                print "ignoring all files under %s..." % fullpath
+                ignore_dirs.append(dirname)
+        # don't traverse ignored directories
+        for ignore_dir in ignore_dirs:
+            dirnames.remove(ignore_dir)
+        for filename in filenames:
+            include = True
+            fullpath = os.path.normpath(os.path.join(dirpath, filename))
+            for pattern in ignore_files:
+                if fnmatch.fnmatch(fullpath, pattern):
+                    include = False
+                    break
+            # include_files will override ignore_files
+            if not include:
+                for pattern in include_files:
+                    if fnmatch.fnmatch(fullpath, pattern):
+                        include = True
+                        break
+            if include:
+                print "including %s..." % fullpath
+                tar_files.append(fullpath)
+            else:
+                print "ignoring %s..." % fullpath
+    
+    if raw_input("Is this OK? Y/n: ") != 'Y':
+        subprocess.call('./grid-setup.sh clean', shell=True)
+        sys.exit(1)
+    
+    # create tar file of PWD
+    tar_name = '%s.tar.gz' % uuid.uuid4().hex
+    with closing(tarfile.open(tar_name, 'w:gz')) as tar:
+        for name in tar_files:
+            tar.add(name)
+
+    @atexit.register
+    def cleanup():
+
+        subprocess.call('./grid-setup.sh clean', shell=True)
+        os.unlink(tar_name)
+
+
 sorted_datasets = sorted(metadata.keys())
 
 # expand globs
@@ -107,73 +179,6 @@ for dataset in args.datasets:
     else:
         datasets.append(dataset)
 
-print "tarring up current directory..."
-print "ignoring files/directories matching pattern in panda.ignore"
-ignore_files = [] 
-if os.path.isfile('panda.ignore'):
-    with open('panda.ignore') as f:
-        ignore_files = [os.path.normpath(line.strip()) for line in f.readlines()]
-
-print "overriding any ignored files/directories if matching pattern in panda.include" 
-include_files = []
-if os.path.isfile('panda.include'):
-    with open('panda.include') as f:
-        include_files = [os.path.normpath(line.strip()) for line in f.readlines()]
-
-# determine which files to include in tar
-tar_files = []
-for dirpath, dirnames, filenames in os.walk('.'):
-    ignore_dirs = []
-    for dirname in dirnames:
-        fullpath = os.path.normpath(os.path.join(dirpath, dirname))
-        include = True
-        for pattern in ignore_files:
-            if fnmatch.fnmatch(fullpath, pattern):
-                include = False
-                break
-        # include_files will override ignore_files
-        if not include:
-            for pattern in include_files:
-                if fnmatch.fnmatch(fullpath, pattern):
-                    include = True
-                    break
-        if not include:
-            print "ignoring all files under %s..." % fullpath
-            ignore_dirs.append(dirname)
-    # don't traverse ignored directories
-    for ignore_dir in ignore_dirs:
-        dirnames.remove(ignore_dir)
-    for filename in filenames:
-        include = True
-        fullpath = os.path.normpath(os.path.join(dirpath, filename))
-        for pattern in ignore_files:
-            if fnmatch.fnmatch(fullpath, pattern):
-                include = False
-                break
-        # include_files will override ignore_files
-        if not include:
-            for pattern in include_files:
-                if fnmatch.fnmatch(fullpath, pattern):
-                    include = True
-                    break
-        if include:
-            print "including %s..." % fullpath
-            tar_files.append(fullpath)
-        else:
-            print "ignoring %s..." % fullpath
-
-# create tar file of PWD
-tar_name = '%s.tar.gz' % uuid.uuid4().hex
-with closing(tarfile.open(tar_name, 'w:gz')) as tar:
-    for name in tar_files:
-        tar.add(name)
-
-@atexit.register
-def cleanup():
-
-    if not args.get:
-        subprocess.call('./grid-setup.sh clean', shell=True)
-    os.unlink(tar_name)
 
 # remove possible .py extension
 args.student = os.path.splitext(args.student)[0]
