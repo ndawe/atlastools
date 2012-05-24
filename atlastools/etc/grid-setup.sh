@@ -108,6 +108,20 @@ function setup_python() {
     export LD_LIBRARY_PATH=${BASE}/python/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 }
 
+function determine_python() {
+    export PYTHON_VERSION=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
+    export PYTHON_LIB=`python -c "import distutils.sysconfig; import os; print os.path.dirname(distutils.sysconfig.get_python_lib(standard_lib=True))"`
+    export PYTHON_INCLUDE=`python -c "import distutils.sysconfig; import os; print os.path.dirname(distutils.sysconfig.get_python_inc())"`/python${PYTHON_VERSION}
+    echo "Python version is "${PYTHON_VERSION}
+    echo "Python lib is located in "${PYTHON_LIB}
+    echo "Python include path is "${PYTHON_INCLUDE}
+    export PYTHONUSERBASE=${BASE}/user-python
+    export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
+    export LD_LIBRARY_PATH=$PYTHON_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    export LDFLAGS="-L${PYTHON_LIB} ${LDFLAGS}"
+    export CPPFLAGS="-I${PYTHON_INCLUDE} ${CPPFLAGS}"
+}
+
 case "${1}" in
 clean)
 
@@ -214,21 +228,16 @@ unpack)
 
 build)
     
-    python_version=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
-    PYTHON_LIB=`python -c "import distutils.sysconfig; import os; print os.path.dirname(distutils.sysconfig.get_python_lib(standard_lib=True))"`
-    echo "Python version "${python_version}
-    echo "Python lib located in "${PYTHON_LIB}
-
+    determine_python
+    export ROOTPY_NO_EXT=1
+ 
     if [[ ! -e user-python ]]
     then
         echo "Creating user python area"
-        mkdir -p user-python/lib/python${python_version}/site-packages/
+        mkdir -p user-python/lib/python${PYTHON_VERSION}/site-packages/
         mkdir user-python/bin
     fi
-    export PYTHONUSERBASE=${BASE}/user-python
-    export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
-    export ROOTPY_NO_EXT=1
-    
+        
     if [[ -f deps/dependencies ]]
     then
         cd deps
@@ -262,8 +271,8 @@ worker)
     then
         setup_root
     fi
-    export PYTHONUSERBASE=${BASE}/user-python
-    export PATH=${PYTHONUSERBASE}/bin${PATH:+:$PATH}
+    
+    determine_python 
     export ROOTPY_GRIDMODE=true
 
     # source user setup script
