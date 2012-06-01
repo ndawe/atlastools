@@ -188,7 +188,7 @@ args.student = os.path.splitext(args.student)[0]
 userpattern = re.compile('^(user|group)\.(?P<user>\S+)\.')
 
 
-commands = []
+jobs = {}
 for dataset in datasets:
     if not dataset in metadata:
         sys.exit("dataset %s not defined in metadata %s" % (dataset, args.metadata))
@@ -206,7 +206,7 @@ for dataset in datasets:
         ds_name = panda_inDS.strip('/').replace('*','_')
         usermatch = re.match(userpattern, ds_name)
         if usermatch:
-            ds_name = ds_name[len(usermatch.group(0):]
+            ds_name = ds_name[len(usermatch.group(0)):]
         panda_outDS = '%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
         panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
@@ -214,7 +214,7 @@ for dataset in datasets:
         if args.get:
             if not os.path.isdir(args.dest):
                 sys.exit("destination path %s does not exist" % args.dest)
-            commands.append('cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS))
+            jobs[panda_outDS] = 'cd %s; run -e grid dq2-get -T 3,8 %s/; cd -' % (args.dest, panda_outDS)
         else:
             panda_site = None
             if ':' in panda_inDS:
@@ -246,7 +246,7 @@ for dataset in datasets:
             command = ' '.join(command)
             if user_args:
                 command += ' %s' % ' '.join(user_args)
-            commands.append(command)
+            jobs[panda_inDS] = {'out': panda_outDS, 'cmd': command}
             if args.test:
                 break
     if args.test:
@@ -264,10 +264,24 @@ def run(command, queue):
     print >> output, stdout
     queue.put(output.getvalue())
 
-if args.get:
-    print "Will get %i output datasets..." % len(commands)
+if args.get: 
+    print "Will download these datasets:"
+    for name in jobs:
+        print name
+    if raw_input("Is this OK? Y/n: ") != 'Y':
+        sys.exit(1) 
+    commands = jobs.values()
+    print "Downloading %i datasets..." % len(commands)
 else:
-    print "Will submit %i jobs..." % len(commands)
+    print "Will submit these jobs:"
+    commands = []
+    for inds, info in jobs.items():
+        print "%s => %s (%s)" % (inds, info['out'], info['cmd'])
+        print
+        commands.append(info['cmd'])
+    if raw_input("Is this OK? Y/n: ") != 'Y':
+        sys.exit(1)
+    print "Submitting %i jobs..." % len(commands)
 
 processes = []
 output_queue = multiprocessing.Queue()
