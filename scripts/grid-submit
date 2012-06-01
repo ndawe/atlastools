@@ -18,7 +18,7 @@ parser.add_argument('-s', '--student',
                          'class of the same name inheriting '
                          'from rootpy.batch.Student', required=True)
 parser.add_argument('-u', '--user',
-                    help='your grid dataset username i.e. JohnDoe',
+                    help='your grid dataset username or group name i.e. user.jdoe or group.phys-higgs',
                     required=True)
 parser.add_argument('--nosite', action='store_true',
                     help='override site in metadata and let the grid decide')
@@ -53,6 +53,7 @@ from cStringIO import StringIO
 from contextlib import closing
 import commands
 import atexit
+import re
 
 
 if args.metadata.endswith('.yml'):
@@ -183,6 +184,10 @@ for dataset in args.datasets:
 # remove possible .py extension
 args.student = os.path.splitext(args.student)[0]
 
+
+userpattern = re.compile('^(user|group)\.(?P<user>\S+)\.')
+
+
 commands = []
 for dataset in datasets:
     if not dataset in metadata:
@@ -199,9 +204,10 @@ for dataset in datasets:
         inDS = fnmatch.filter(inDS, args.filter)
     for panda_inDS in inDS:
         ds_name = panda_inDS.strip('/').replace('*','_')
-        if ds_name.startswith('user.%s.' % args.user):
-            ds_name = ds_name[len('user.%s.' % args.user):]
-        panda_outDS = 'user.%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
+        usermatch = re.match(userpattern, ds_name)
+        if usermatch:
+            ds_name = ds_name[len(usermatch.group(0):]
+        panda_outDS = '%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
         panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
             panda_outDS += '_test'
