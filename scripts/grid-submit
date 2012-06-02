@@ -185,7 +185,7 @@ for dataset in args.datasets:
 args.student = os.path.splitext(args.student)[0]
 
 
-userpattern = re.compile('^(user|group)\.(?P<user>\S+)\.')
+userpattern = re.compile('^(user|group)\.(?P<user>[^\.]+)\.')
 
 
 jobs = {}
