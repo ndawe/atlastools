@@ -16,7 +16,7 @@ ATLASFileset = namedtuple('ATLASFileset', Fileset._fields + ('year', 'grl',))
 mcpattern = re.compile("^(optimized.)?group(?P<year>[0-9]{2}).(?P<group>[^.]+).mc(?P<prodyear>[0-9]{2})[_]?(?P<energy>[0-9]{1,2})(TeV)?.(?P<run>[0-9]+).(?P<name>).(?P<tag>[^.]+).(?P<suffix>.+)$")
 datapattern = re.compile("^(\w+).(?P<name>[a-zA-Z_\-0-9]+).(?P<run>[0-9]+).*$")
 
-DATA,MC = range(2)
+DATA,MC,EMBED = range(3)
 BACKGROUND,SIGNAL = range(2)
 TAU,MUON,ELEC,JET = range(4)
 
