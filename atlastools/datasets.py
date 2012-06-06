@@ -26,8 +26,9 @@ classes = {
 }
 
 types = {
-    'DATA': DATA,
-    'MC'  : MC
+    'DATA' : DATA,
+    'MC'   : MC,
+    'EMBED': EMBED,
 }
 
 labels = {
