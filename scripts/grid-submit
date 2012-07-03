@@ -113,7 +113,7 @@ if not args.get:
 
     # determine which files to include in tar
     tar_files = []
-    for dirpath, dirnames, filenames in os.walk('.'):
+    for dirpath, dirnames, filenames in os.walk('.', followlinks=True):
         ignore_dirs = []
         for dirname in dirnames:
             fullpath = os.path.normpath(os.path.join(dirpath, dirname))
