@@ -262,7 +262,11 @@ build)
     # source user build script
     if [[ -f grid.build ]]
     then
-        source grid.build
+        if ! source grid.build
+        then
+            echo "Failed to execute user build script"
+            exit 1
+        fi
     fi
     ;;
 
