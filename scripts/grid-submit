@@ -17,6 +17,9 @@ parser.add_argument('-s', '--student',
                     help='the file (excluding .py extension) containing a '
                          'class of the same name inheriting '
                          'from rootpy.batch.Student', required=True)
+parser.add_argument('--student-args',
+                    help='args to pass along to the student',
+                    default='')
 parser.add_argument('-u', '--user',
                     help='your grid dataset username or group name i.e. user.jdoe or group.phys-higgs',
                     required=True)
@@ -222,10 +225,11 @@ for dataset in datasets:
             panda_bexec = './grid-setup.sh build'
             # `which python` is needed since setuptools rewrites the shebang
             # the sheband specified in the buildjob won't be the same as in the worker job
-            panda_exec = 'source grid-setup.sh worker; ' \
-                         'python ./user-python/bin/grid-batch --dataset %s ' \
-                         '--metadata %s --student %s %%IN' % \
-                         (dataset, args.metadata, args.student)
+            panda_exec = ('source grid-setup.sh worker; '
+                          'python ./user-python/bin/grid-batch --dataset %s '
+                          '--metadata %s --student %s %s %%IN' % 
+                          (dataset, args.metadata,
+                           args.student, args.student_args))
             panda_outputs = '%s.%s.root' % (args.student, dataset)
             if args.outputs is not None:
                 panda_outputs = ','.join([panda_outputs, args.outputs])
