@@ -35,6 +35,8 @@ parser.add_argument('--merge', action='store_true',
                   help='merge outputs on the grid')
 parser.add_argument('--test', action='store_true',
                   help='only submit one job as a test')
+parser.add_argument('--suffix', default=None,
+                    help='suffix to add to the output dataset name')
 parser.add_argument('-f', '--filter', default=None,
                     help='only submit jobs on datasets matching this glob')
 parser.add_argument('datasets', nargs="+")
@@ -210,7 +212,12 @@ for dataset in datasets:
         usermatch = re.match(userpattern, ds_name)
         if usermatch:
             ds_name = ds_name[len(usermatch.group(0)):]
-        panda_outDS = '%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
+        if args.suffix:
+            panda_outDS = '%s.%s.%s.%s.v%i' % (
+                    args.user, args.student, ds_name, args.suffix, args.version)
+        else:
+            panda_outDS = '%s.%s.%s.v%i' % (
+                    args.user, args.student, ds_name, args.version)
         panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
             panda_outDS += '_test'
