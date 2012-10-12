@@ -4,8 +4,8 @@ import ROOT
 import re
 import uuid
 import traceback
-from rootpy.data.datamanaging import *
-from rootpy.data import metadata
+from .datamanaging import *
+from . import metadata
 from rootpy.tree import *
 from rootpy.plotting import *
 from rootpy import common
@@ -55,7 +55,7 @@ localVariableMeta = {}
 plotMode = "default"
 
 def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
-    
+
     global manager
     global canvas
     global properties
@@ -68,7 +68,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
     except:
         error("cut expression is not well-formed")
         return None
-    
+
     samples = []
     for sample in sampledicts:
         samplelist = manager.get_samples(sample["sample"], properties = sample)
@@ -80,10 +80,10 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
                 print "sample %s not found"%(sample["sample"])
                 return None
         samples.append(samplelist)
-   
+
     # take meta from first sample
     meta = samples[0][0].meta
-     
+
     intmode = False
     varExpr = expression.split(',')
     varExpr.reverse() # Why ROOT... WHY???
@@ -102,13 +102,13 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
         info = {}
         info.update(details)
         xmin,xmax = details['range']
-        
+
         if details["type"].lower()=='int':
             intmode = True
         elif samplelist[0].properties.has_key("intmode"):
             if samplelist[0].properties["intmode"]:
                 intmode = True
-            
+
         if intmode:
             bins = int(xmax-xmin+1)
             xmin = xmin - 0.5
@@ -128,7 +128,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
         info["bins"] = bins
         info["edges"] = edges
         variables.append((var,info))
-    
+
     if len(variables) > 3:
         error("can't plot in more than 3 dimensions")
         return None
@@ -138,7 +138,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
     if not htemplate:
         error("could not create histogram template")
         return None
-   
+
     ylabel = ""
     labels = []
     modifiedVarNames = []
@@ -179,9 +179,9 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
     stackedNames = []
     if stacked:
         stackedNames = stacked.split(',')
-    
+
     for samplelist in samples:
-        name = ",".join([s.name for s in samplelist]) 
+        name = ",".join([s.name for s in samplelist])
         sample_props = samplelist[0].properties
         label = None
         if sample_props.has_key('label'):
@@ -205,7 +205,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
             weight_string = os.path.expandvars(sample_props["weights"])
             weights = Cut(weight_string, from_file=(os.path.isfile(weight_string)))
             localCuts = weights * localCuts
-        
+
         common.draw_samples(samplelist, expression, hist, cuts = localCuts, weighted=(not properties["ignoretreeweights"]["value"]))
 
         if label:
@@ -214,7 +214,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
         else:
             hist.SetTitle(name)
             hist.SetName(name)
-        
+
         hist.SetLineWidth(properties["linewidth"]["value"])
         hist.SetMarkerSize(properties["markersize"]["value"])
         hist.intmode = intmode
@@ -230,7 +230,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
             stackedHistos.append(hist)
         else:
             histos.append(hist)
-    
+
     if len(procRef) > 0:
         procRef[0].visible = False
         integral = procRef[1].Integral()
@@ -251,7 +251,7 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
         refGraph.GetXaxis().SetLimits(variables[0][1]["min"],variables[0][1]["max"])
         refGraph.GetXaxis().SetRangeUser(variables[0][1]["min"],variables[0][1]["max"])
         histos = [refGraph] + histos
-        
+
     #ROOT.gStyle.SetHatchesSpacing(properties["linewidth"]["value"])
     ROOT.gStyle.SetHatchesLineWidth(properties["linewidth"]["value"])
     ROOT.gStyle.SetTextSize(properties["textsize"]["value"])
@@ -273,14 +273,14 @@ def plot(sampledicts,expression,cuts,reference=None,norm=None,stacked=None):
                yscale = properties["yscale"]["value"],
                xscale = properties["yscale"]["value"],
                greedylegend = properties["legendmode"]["value"],
-               minmax = properties["minmax"]["value"], 
+               minmax = properties["minmax"]["value"],
                maxmin = properties["maxmin"]["value"],
                minimum = 0.)
     blankCanvas = False
     return histos, _max, _min
 
 def draw(hists):
-    
+
     if not hists:
         return
     if not type(hists) is list:
@@ -289,9 +289,9 @@ def draw(hists):
         return
     axisLabels = hists[0].axisLabels
     ylabel = hists[0].ylabel
-     
+
     canvas.Clear()
-    
+
     #ROOT.gStyle.SetHatchesSpacing(properties["linewidth"]["value"])
     ROOT.gStyle.SetHatchesLineWidth(properties["linewidth"]["value"])
     ROOT.gStyle.SetTextSize(properties["textsize"]["value"])
@@ -299,7 +299,7 @@ def draw(hists):
     textlabel = None
     if properties["label"]["value"] != "":
         textlabel = common.makeLabel(properties["labelx"]["value"],properties["labely"]["value"],properties["label"]["value"])
-    
+
     drawHistos(canvas,hists,properties["title"]["value"],axisLabels,label=textlabel,ylabel=ylabel,normalized=properties["normalize"]["value"],
                showLegend=objects["legend"],
                yscale=properties["yscale"]["value"])
@@ -357,7 +357,7 @@ def graph(file):
         drawObject(canvas,g,"L SAME")
 
 def getHistTemplate(variables):
-    
+
     if len(variables) == 1:
         bins = variables[0][1]["bins"]
         if len(variables[0][1]["edges"]) == 2:
@@ -400,19 +400,19 @@ def getHistTemplate(variables):
         return None
 
 def load(filename):
-    
+
     path = os.path.expandvars(filename)
     if os.path.isdir(path):
         manager.load(path, path)
     else:
         manager.load(path)
-    
+
 def plug(filename):
-    
+
     manager.plug(os.path.expandvars(filename))
 
 def param(parameter,value=None):
-    
+
     global properties
     global canvas
     if not properties.has_key(parameter):
@@ -427,9 +427,9 @@ def mode(value):
 
     global plotMode
     plotMode = value
-        
+
 def show(object,value):
-    
+
     global objects
     if object not in objects.keys():
         error("unknown object: %s"%object)
@@ -441,10 +441,10 @@ def show(object,value):
     objects[object] = value == "True"
 
 def showBranches():
-    
+
     for variable in localVariableMeta.keys():
         print variable
-        
+
 def addVariable(variable, **details):
 
     if not details:
@@ -454,7 +454,7 @@ def addVariable(variable, **details):
         localVariableMeta[variable] = details
 
 def setRange(variable,min,max):
-    
+
     try:
         min = float(min)
         max = float(max)
@@ -508,13 +508,13 @@ def setType(variable,typename):
         del localVariableMeta[variable]["type"]
     else:
         localVariableMeta[variable]["type"]=typename.lower()
-  
+
 def save(filename):
-    
+
     common.save_pad(canvas,filename,properties["imageformat"]["value"])
-    
+
 def clear():
-    
+
     global canvas
     global blankCanvas
     blankCanvas = True
@@ -523,7 +523,7 @@ def clear():
     canvas.Update()
 
 def reset(canvasOnly=False):
-    
+
     global canvas
     global variableRangeMap
     global blankCanvas
