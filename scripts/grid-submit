@@ -17,6 +17,9 @@ parser.add_argument('-s', '--student',
                     help='the file (excluding .py extension) containing a '
                          'class of the same name inheriting '
                          'from rootpy.batch.Student', required=True)
+parser.add_argument('--student-args',
+                    help='args to pass along to the student',
+                    default='')
 parser.add_argument('-u', '--user',
                     help='your grid dataset username or group name i.e. user.jdoe or group.phys-higgs',
                     required=True)
@@ -32,6 +35,8 @@ parser.add_argument('--merge', action='store_true',
                   help='merge outputs on the grid')
 parser.add_argument('--test', action='store_true',
                   help='only submit one job as a test')
+parser.add_argument('--suffix', default=None,
+                    help='suffix to add to the output dataset name')
 parser.add_argument('-f', '--filter', default=None,
                     help='only submit jobs on datasets matching this glob')
 parser.add_argument('datasets', nargs="+")
@@ -113,7 +118,7 @@ if not args.get:
 
     # determine which files to include in tar
     tar_files = []
-    for dirpath, dirnames, filenames in os.walk('.'):
+    for dirpath, dirnames, filenames in os.walk('.', followlinks=True):
         ignore_dirs = []
         for dirname in dirnames:
             fullpath = os.path.normpath(os.path.join(dirpath, dirname))
@@ -207,7 +212,12 @@ for dataset in datasets:
         usermatch = re.match(userpattern, ds_name)
         if usermatch:
             ds_name = ds_name[len(usermatch.group(0)):]
-        panda_outDS = '%s.%s.%s.v%i' % (args.user, args.student, ds_name, args.version)
+        if args.suffix:
+            panda_outDS = '%s.%s.%s.%s.v%i' % (
+                    args.user, args.student, ds_name, args.suffix, args.version)
+        else:
+            panda_outDS = '%s.%s.%s.v%i' % (
+                    args.user, args.student, ds_name, args.version)
         panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
             panda_outDS += '_test'
@@ -222,10 +232,11 @@ for dataset in datasets:
             panda_bexec = './grid-setup.sh build'
             # `which python` is needed since setuptools rewrites the shebang
             # the sheband specified in the buildjob won't be the same as in the worker job
-            panda_exec = 'source grid-setup.sh worker; ' \
-                         'python ./user-python/bin/grid-batch --dataset %s ' \
-                         '--metadata %s --student %s %%IN' % \
-                         (dataset, args.metadata, args.student)
+            panda_exec = ('source grid-setup.sh worker; '
+                          'python ./user-python/bin/grid-batch --dataset %s '
+                          '--metadata %s --student %s %s %%IN' % 
+                          (dataset, args.metadata,
+                           args.student, args.student_args))
             panda_outputs = '%s.%s.root' % (args.student, dataset)
             if args.outputs is not None:
                 panda_outputs = ','.join([panda_outputs, args.outputs])

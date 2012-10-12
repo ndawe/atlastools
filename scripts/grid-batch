@@ -14,6 +14,8 @@ parser.add_argument('-m', '--metadata',
 parser.add_argument('-s', '--student',
                   help="the file (excluding .py extension) containing a"
                        "class of the same name inheriting from rootpy.batch.Student", required=True)
+parser.add_argument('--profile', action='store_true',
+                  help="profile execution time of each student's work method", default=False)
 parser.add_argument('--anti-match',
                   help="skip files matching this expression")
 parser.add_argument('--match',
@@ -120,6 +122,7 @@ supervisor = ATLASSupervisor(
     gridmode = True,
     grl = fileset.grl,
     events = args.events,
+    profile = args.profile,
     options = user_args)
 
 try:
