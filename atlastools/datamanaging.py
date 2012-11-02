@@ -1,6 +1,6 @@
-from ..io import File, open as ropen
-from ..tree import Cut
-from .dataset import Treeset
+from rootpy.io import File, open as ropen
+from rootpy.tree import Cut
+from rootpy.data.dataset import Treeset
 import uuid
 import os
 import metadata
