@@ -194,7 +194,7 @@ class DataManager(object):
                     print("Warning: applying cuts on tree with multiple "
                           "friends is not safely implemented yet")
             self.scratchFile.cd()
-            tree = tree.CopyTree(str(cuts))
+            tree = tree.CopyTree(str(cuts), 'fast')
         originalNumEntries = tree.GetEntries()
         if fraction > -1.:
             entries = tree.GetEntries()
@@ -203,7 +203,7 @@ class DataManager(object):
                       "entries." % (fraction * 100., entries))
             newEntries = int(fraction * entries)
             self.scratchFile.cd()
-            tree = tree.CloneTree(newEntries)
+            tree = tree.CopyTree('', 'fast', newEntries)
         elif maxEntries > -1 and tree.GetEntries() > maxEntries:
             if self.verbose:
                 print("Number of entries in tree exceeds maximum allowed by "
@@ -211,7 +211,7 @@ class DataManager(object):
                 print("Extracting %i of %i total entries" %
                       (maxEntries, tree.GetEntries()))
             self.scratchFile.cd()
-            tree = tree.CloneTree(maxEntries)
+            tree = tree.CopyTree('', 'fast', maxEntries)
         finalNumEntries = tree.GetEntries()
         if finalNumEntries > 0 and originalNumEntries != finalNumEntries:
             tree.SetWeight(tree.GetWeight() * float(originalNumEntries) /
