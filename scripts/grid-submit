@@ -37,6 +37,8 @@ parser.add_argument('--test', action='store_true',
                   help='only submit one job as a test')
 parser.add_argument('--suffix', default=None,
                     help='suffix to add to the output dataset name')
+parser.add_argument('--yall', action='store_true', default=False,
+                  help='answer yes to all questions')
 parser.add_argument('-f', '--filter', default=None,
                     help='only submit jobs on datasets matching this glob')
 parser.add_argument('datasets', nargs="+")
@@ -158,9 +160,10 @@ if not args.get:
             else:
                 print "ignoring %s..." % fullpath
     
-    if raw_input("Is this OK? Y/n: ") != 'Y':
-        subprocess.call('./grid-setup.sh clean', shell=True)
-        sys.exit(1)
+    if not args.yall:
+        if raw_input("Is this OK? Y/n: ") != 'Y':
+            subprocess.call('./grid-setup.sh clean', shell=True)
+            sys.exit(1)
     
     # create tar file of PWD
     tar_name = '%s.tar.gz' % uuid.uuid4().hex
@@ -279,8 +282,9 @@ if args.get:
     print "Will download these datasets:"
     for name in jobs:
         print name
-    if raw_input("Is this OK? Y/n: ") != 'Y':
-        sys.exit(1) 
+    if not args.yall:
+        if raw_input("Is this OK? Y/n: ") != 'Y':
+            sys.exit(1) 
     commands = jobs.values()
     print "Downloading %i datasets..." % len(commands)
 else:
@@ -290,8 +294,9 @@ else:
         print "%s => %s (%s)" % (inds, info['out'], info['cmd'])
         print
         commands.append(info['cmd'])
-    if raw_input("Is this OK? Y/n: ") != 'Y':
-        sys.exit(1)
+    if not args.yall:
+        if raw_input("Is this OK? Y/n: ") != 'Y':
+            sys.exit(1)
     print "Submitting %i jobs..." % len(commands)
 
 processes = []
