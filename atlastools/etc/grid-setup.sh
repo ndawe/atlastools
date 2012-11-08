@@ -18,6 +18,7 @@ repo='http://linuxsoft.cern.ch/cern/slc5X/updates/x86_64/RPMS/'
 PYTHON_VERS_MAJOR=2.7
 PYTHON_VERS=2.7.2
 ROOT_VERS=5.32.00
+DISTRIBUTE_VERS=0.6.28
 
 use_precompiled_python=true
 use_precompiled_root=true
@@ -60,6 +61,7 @@ function install_python_package() {
     then
         echo "Installing ${PACKAGE}..."
         cd ${PACKAGE}
+        cp ${BASE}/distribute-${DISTRIBUTE_VERS}.tar.gz .
         #echo ">>> lib dirs: ${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64"
         #echo ">>> include dirs: ${RPM_INCLUDE}"
         #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
@@ -137,16 +139,48 @@ clean)
             rm -f ${package}.tar.gz
         done < ${github_deps}
     fi
+    if [[ -f deps/dependencies ]]
+    then
+        cd deps
+        while read line
+        do
+            tokens=($line)
+            rm -rf ${tokens[0]}
+            rm -f ${tokens[0]}.tar.gz
+        done < dependencies
+        cd ${BASE}
+    fi
+    rm -f ${BASE}/distribute-${DISTRIBUTE_VERS}.tar.gz
     ;;
 
 local)
     
+    if [[ -f deps/dependencies ]]
+    then
+        cd deps
+        while read line
+        do
+            tokens=($line)
+            package=${tokens[0]}
+            url=${tokens[1]}
+            if [[ ! -e ${package}.tar.gz ]]
+            then
+                wget ${url}
+            fi
+        done < dependencies
+        cd ${BASE}
+    fi
     if [[ -f ${github_deps} ]]
     then
         while read line
         do
             download_from_github $line
         done < ${github_deps}
+    fi
+    # get distribute
+    if [[ ! -e distribute-${DISTRIBUTE_VERS}.tar.gz ]]
+    then
+        wget http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERS}.tar.gz
     fi
     ;;
 
@@ -237,14 +271,16 @@ build)
         mkdir -p user-python/lib/python${PYTHON_VERSION}/site-packages/
         mkdir user-python/bin
     fi
-        
     if [[ -f deps/dependencies ]]
     then
         cd deps
-        while read file
+        while read line
         do
-            tar -zxvf ${file}.tar.gz
-            cd ${file}
+            tokens=($line)
+            package=${tokens[0]}
+            tar -zxvf ${package}.tar.gz
+            cd ${package}
+            cp ${BASE}/distribute-${DISTRIBUTE_VERS}.tar.gz .
             python setup.py install --user
             cd ..
         done < dependencies
