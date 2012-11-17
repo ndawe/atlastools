@@ -18,7 +18,7 @@ repo='http://linuxsoft.cern.ch/cern/slc5X/updates/x86_64/RPMS/'
 PYTHON_VERS_MAJOR=2.7
 PYTHON_VERS=2.7.2
 ROOT_VERS=5.32.00
-DISTRIBUTE_VERS=0.6.28
+DISTRIBUTE_VERS=0.6.30
 
 use_precompiled_python=true
 use_precompiled_root=true
