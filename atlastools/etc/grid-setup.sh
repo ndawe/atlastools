@@ -20,8 +20,12 @@ PYTHON_VERS=2.7.2
 ROOT_VERS=5.32.00
 DISTRIBUTE_VERS=0.6.30
 
-use_precompiled_python=true
-use_precompiled_root=true
+ROOT_VERSION_CVMFS=5.34.03-x86_64-slc5-gcc4.3
+PYTHON_VERSION_CVMFS=2.6.5-x86_64-slc5-gcc43
+
+USE_PRECOMPILED_PYTHON=true
+USE_PRECOMPILED_ROOT=true
+USE_CVMFS=true
 
 function download_from_github() {
     cd ${BASE}
@@ -124,6 +128,19 @@ function determine_python() {
     export CPPFLAGS="-I${PYTHON_INCLUDE} ${CPPFLAGS}"
 }
 
+function setup_CVMFS() {
+    export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+    source $ATLAS_LOCAL_ROOT_BASE/user/atlasLocalSetup.sh
+}
+
+function setup_ROOT_CVMFS() {
+    localSetupROOT --rootVersion=${ROOT_VERSION_CVMFS}
+}
+
+function setup_python_CVMFS() {
+    localSetupPython --pythonVersion=${PYTHON_VERSION_CVMFS}
+}
+
 case "${1}" in
 clean)
 
@@ -190,7 +207,7 @@ build-root-python)
 
     if [[ ! -e python ]]
     then
-        if $use_precompiled_python
+        if $USE_PRECOMPILED_PYTHON
         then
             if ! wget http://hep.phys.sfu.ca/~endw/grid/python.tar.gz
             then
@@ -220,7 +237,7 @@ build-root-python)
 
     if [[ ! -e root ]]
     then
-        if ${use_precompiled_root}
+        if $USE_PRECOMPILED_ROOT
         then
             if ! wget http://hep.phys.sfu.ca/~endw/grid/root.tar.gz
             then
@@ -261,6 +278,13 @@ unpack)
     ;;
 
 build)
+    
+    if $USE_CVMFS
+    then
+        setup_CVMFS
+        setup_python_CVMFS
+        setup_ROOT_CVMFS
+    fi
     
     determine_python
     export ROOTPY_NO_EXT=1
@@ -308,6 +332,13 @@ build)
 
 worker)
     
+    if $USE_CVMFS
+    then
+        setup_CVMFS
+        setup_python_CVMFS
+        setup_ROOT_CVMFS
+    fi
+
     if [[ -e python ]]
     then
         setup_python
