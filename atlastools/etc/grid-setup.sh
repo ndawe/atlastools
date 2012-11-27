@@ -1,5 +1,6 @@
 #!/bin/bash
 # Author: Noel Dawe
+shopt -s expand_aliases
 
 function print_help() {
     echo "Usage : $0 [clean|local|unpack|build-root-python|build|worker]"
@@ -134,11 +135,13 @@ function setup_CVMFS() {
 }
 
 function setup_ROOT_CVMFS() {
-    localSetupROOT --rootVersion=${ROOT_VERSION_CVMFS}
+    source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalROOTSetup.sh \
+        --skipConfirm --rootVersion=${ROOT_VERSION_CVMFS}
 }
 
 function setup_python_CVMFS() {
-    localSetupPython --pythonVersion=${PYTHON_VERSION_CVMFS}
+    source ${ATLAS_LOCAL_ROOT_BASE}/packageSetups/atlasLocalPythonSetup.sh \
+        --pythonVersion=${PYTHON_VERSION_CVMFS}
 }
 
 case "${1}" in
