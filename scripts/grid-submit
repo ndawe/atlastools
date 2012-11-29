@@ -223,7 +223,7 @@ for dataset in datasets:
                     args.user, args.student, ds_name, args.version)
         panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
-            panda_outDS += '_test'
+            panda_outDS += '_test%s' % uuid.uuid4().hex[:6]
         if args.get:
             if not os.path.isdir(args.dest):
                 sys.exit("destination path %s does not exist" % args.dest)
