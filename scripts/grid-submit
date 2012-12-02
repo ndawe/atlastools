@@ -236,9 +236,10 @@ for dataset in datasets:
             # `which python` is needed since setuptools rewrites the shebang
             # the sheband specified in the buildjob won't be the same as in the worker job
             panda_exec = ('source grid-setup.sh worker; '
+                          'export INPUT_DATASET_NAME=%s; '
                           'python ./user-python/bin/grid-batch --dataset %s '
                           '--metadata %s --student %s %s %%IN' % 
-                          (dataset, args.metadata,
+                          (panda_inDS, dataset, args.metadata,
                            args.student, args.student_args))
             panda_outputs = '%s.%s.root' % (args.student, dataset)
             if args.outputs is not None:
