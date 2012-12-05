@@ -1,13 +1,11 @@
 import string
 import math
 from rootpy.core import isbasictype
-# FIXME: * imports should only be used in __init__ files
 from rootpy.plotting import *
 from rootpy.plotting.core import dim
 from rootpy.plotting.hist import _HistBase
-# FIXME: * imports should only be used in __init__ files
 from rootpy.plotting.style import *
-from rootpy.utils import asrootpy
+from rootpy import asrootpy
 import ROOT
 import os
 import uuid
