@@ -15,7 +15,11 @@ setup(name='atlastools',
       author_email='noel.dawe@cern.ch',
       url='http://github.com/ndawe/atlastools',
       packages=find_packages(),
-      install_requires=['PyYAML', 'configobj', 'goodruns', 'argparse'],
+      install_requires=[
+          #'rootpy', add rootpy once 0.7 is released
+          'PyYAML',
+          'configobj',
+          'goodruns'],
       zip_safe=False,
       scripts=glob('scripts/*') + ['atlastools/etc/grid-setup.sh'],
       package_data={'': ['etc/*']},

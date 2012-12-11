@@ -3,7 +3,7 @@
 import sys
 from atlastools import environment
 from subprocess import call
-from argparse import ArgumentParser
+from goodruns.extern.argparse import ArgumentParser
 
 parser = ArgumentParser(usage="%(prog)s [options] command")
 parser.add_argument('-e', '--env', required=True,

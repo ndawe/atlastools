@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from argparse import ArgumentParser
+from goodruns.extern.argparse import ArgumentParser
 import multiprocessing
 
 parser = ArgumentParser(usage="%(prog)s [args] samplename1 samplename2 ...")
