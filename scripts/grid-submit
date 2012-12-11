@@ -215,15 +215,14 @@ for dataset in datasets:
         usermatch = re.match(userpattern, ds_name)
         if usermatch:
             ds_name = ds_name[len(usermatch.group(0)):]
+        panda_outDS = '%s.%s.%s' % (args.user, args.student, ds_name)
         if args.suffix:
-            panda_outDS = '%s.%s.%s.%s.v%i' % (
-                    args.user, args.student, ds_name, args.suffix, args.version)
-        else:
-            panda_outDS = '%s.%s.%s.v%i' % (
-                    args.user, args.student, ds_name, args.version)
+            panda_outDS += '.' + args.suffix
         panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.','')
         if args.test:
             panda_outDS += '_test%s' % uuid.uuid4().hex[:6]
+        else:
+            panda_outDS += '.v%i' % args.version
         if args.get:
             if not os.path.isdir(args.dest):
                 sys.exit("destination path %s does not exist" % args.dest)
