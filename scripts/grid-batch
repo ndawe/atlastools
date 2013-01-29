@@ -27,6 +27,8 @@ import sys
 import os
 import ROOT
 import glob
+import rootpy
+rootpy.log.basic_config_colorized()
 from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
 from atlastools.datasets import ATLASFileset
