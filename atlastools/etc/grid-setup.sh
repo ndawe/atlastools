@@ -32,7 +32,7 @@ USE_CVMFS=true
 echo "Python site imported from:"
 python -c "import site; print site.__file__"
 # clear PYTHONPATH
-unset $PYTHONPATH
+unset PYTHONPATH
 
 
 function download_from_github() {
