@@ -28,6 +28,13 @@ USE_PRECOMPILED_PYTHON=true
 USE_PRECOMPILED_ROOT=true
 USE_CVMFS=true
 
+# debugging grid issues
+echo "Python site imported from:"
+python -c "import site; print site.__file__"
+# clear PYTHONPATH
+unset $PYTHONPATH
+
+
 function download_from_github() {
     cd ${BASE}
     GIT_USER=${1}
