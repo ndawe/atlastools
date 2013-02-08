@@ -1,9 +1,0 @@
-#!/usr/bin/env python
-
-from atlastools import environment
-import sys
-
-if len(sys.argv) != 2:
-    sys.exit("specify a name for this environment")
-
-environment.define(sys.argv[1])
