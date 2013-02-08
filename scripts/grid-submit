@@ -206,6 +206,7 @@ for dataset in datasets:
             with open(inDS) as f:
                 inDS = [s.strip() for s in f.readlines()]
                 inDS = [s for s in inDS if not s.startswith('#')]
+                inDS = [s for s in inDS if s]
     if type(inDS) not in (list, tuple):
         inDS = [inDS]
     if args.filter is not None:
