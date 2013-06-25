@@ -63,6 +63,24 @@ import atexit
 import re
 
 
+def humanize_bytes(bytes, precision=1):
+
+    abbrevs = (
+        (1<<50L, 'PB'),
+        (1<<40L, 'TB'),
+        (1<<30L, 'GB'),
+        (1<<20L, 'MB'),
+        (1<<10L, 'kB'),
+        (1, 'bytes')
+    )
+    if bytes == 1:
+        return '1 byte'
+    for factor, suffix in abbrevs:
+        if bytes >= factor:
+            break
+    return '%.*f %s' % (precision, bytes / factor, suffix)
+
+
 if args.metadata.endswith('.yml'):
     with open(args.metadata, 'r') as configfile:
         metadata = yaml.load(configfile)
@@ -155,10 +173,10 @@ if not args.get:
                         include = True
                         break
             if include:
-                print "+ %s" % fullpath
+                print "+ {0} {1}".format(humanize_bytes(os.path.getsize(fullpath)).ljust(12), fullpath)
                 tar_files.append(fullpath)
             else:
-                print "- %s" % fullpath
+                print "- {0} {1}".format(' ' * 12, fullpath)
     
     if not args.yall:
         if raw_input("Is this OK? Y/n: ") != 'Y':
