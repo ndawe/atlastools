@@ -330,6 +330,7 @@ if args.get:
     print "Downloading %i datasets ..." % len(commands)
 else:
     print "Will submit these jobs:"
+    print
     commands = []
     for inds, info in jobs.items():
         print "%s => %s (%s)" % (inds, info['out'], info['cmd'])
