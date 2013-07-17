@@ -21,7 +21,7 @@ PYTHON_VERS=2.7.2
 ROOT_VERS=5.32.00
 DISTRIBUTE_VERS=0.6.28
 
-ROOT_VERSION_CVMFS=5.34.03-x86_64-slc5-gcc4.3
+ROOT_VERSION_CVMFS=5.34.07-x86_64-slc5-gcc4.3
 PYTHON_VERSION_CVMFS=2.6.5-x86_64-slc5-gcc43
 
 USE_PRECOMPILED_PYTHON=true
@@ -192,7 +192,7 @@ local)
             url=${tokens[1]}
             if [[ ! -e ${package}.tar.gz ]]
             then
-                wget ${url}
+                wget --no-check-certificate ${url}
             fi
         done < dependencies
         cd ${BASE}
