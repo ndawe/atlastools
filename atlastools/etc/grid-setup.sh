@@ -207,7 +207,7 @@ local)
     # get distribute
     if [[ ! -e distribute-${DISTRIBUTE_VERS}.tar.gz ]]
     then
-        wget http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERS}.tar.gz
+        wget --no-check-certificate http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERS}.tar.gz
     fi
     ;;
 
