@@ -5,7 +5,8 @@ import multiprocessing
 
 parser = ArgumentParser(usage="%(prog)s [args] samplename1 samplename2 ...")
 parser.add_argument('--nproc', type=int,
-                  default=multiprocessing.cpu_count(), help="maximum number of simultaneous job submissions")
+                    default=multiprocessing.cpu_count(),
+                    help="maximum number of simultaneous job submissions")
 parser.add_argument('-m', '--meta', dest='metadata',
                     help='YAML file containing dataset metadata',
                     default='datasets.yml')
@@ -23,22 +24,24 @@ parser.add_argument('--student-args',
 parser.add_argument('-u', '--user',
                     help='your grid dataset username or group name i.e. user.jdoe or group.phys-higgs',
                     required=True)
-parser.add_argument('--nosite', action='store_true',
+parser.add_argument('--no-site', action='store_true',
                     help='override site in metadata and let the grid decide')
+parser.add_argument('--no-default-output', action='store_true',
+                    help='do not assume an output ROOT file by default')
 parser.add_argument('-o', '--outputs',
                     help='extra output files separated by ","')
 parser.add_argument('-g', '--get', action='store_true',
-                  help='download datasets')
+                    help='download datasets')
 parser.add_argument('-d', '--dest', default='.',
                     help='directory in which to download the datasets')
 parser.add_argument('--merge', action='store_true',
-                  help='merge outputs on the grid')
+                    help='merge outputs on the grid')
 parser.add_argument('--test', action='store_true',
-                  help='only submit one job as a test')
+                    help='only submit one job as a test')
 parser.add_argument('--suffix', default=None,
                     help='suffix to add to the output dataset name')
 parser.add_argument('--yall', action='store_true', default=False,
-                  help='answer yes to all questions')
+                    help='answer yes to all questions')
 parser.add_argument('-f', '--filter', default=None,
                     help='only submit jobs on datasets matching this glob')
 parser.add_argument('datasets', nargs="+")
@@ -127,7 +130,8 @@ if not args.get:
     import pkg_resources
     import shutil
     import stat
-    filename = 'grid-setup.sh' 
+    filename = 'grid-setup.sh'
+    print
     print "Copying %s from atlastools..." % filename
     setup_script = pkg_resources.resource_filename('atlastools', 'etc/%s' % filename)
     shutil.copyfile(setup_script, filename)
@@ -191,6 +195,7 @@ if not args.get:
                 print "- {0} {1}".format(' ' * 12, fullpath)
     
     if not args.yall:
+        print
         if raw_input("Is this OK? Y/n: ") != 'Y':
             subprocess.call('./grid-setup.sh clean', shell=True)
             sys.exit(1)
@@ -207,7 +212,6 @@ if not args.get:
         subprocess.call('./grid-setup.sh clean', shell=True)
         os.unlink(tar_name)
 
-
 sorted_datasets = sorted(metadata.keys())
 
 # expand globs
@@ -218,13 +222,9 @@ for dataset in args.datasets:
     else:
         datasets.append(dataset)
 
-
 # remove possible .py extension
 args.student = os.path.splitext(args.student)[0]
-
-
 userpattern = re.compile('^(user|group)\.(?P<user>[^\.]+)\.')
-
 
 longds = False
 jobs = {}
@@ -282,9 +282,15 @@ for dataset in datasets:
                           '--metadata %s --student %s %s %%IN' % 
                           (panda_inDS, dataset, args.metadata,
                            args.student, args.student_args))
-            panda_outputs = '%s.%s.root' % (args.student, dataset)
-            if args.outputs is not None:
-                panda_outputs = ','.join([panda_outputs, args.outputs])
+            if args.no_default_output:
+                if not args.outputs:
+                    raise RuntimeError(
+                        "--no-default-output requires --outputs to be specified")
+                panda_outputs = args.outputs
+            else:
+                panda_outputs = '%s.%s.root' % (args.student, dataset)
+                if args.outputs is not None:
+                    panda_outputs = ','.join([panda_outputs, args.outputs])
             command = [
                 'prun',
                 '--bexec "%s"' % panda_bexec,
@@ -297,7 +303,7 @@ for dataset in datasets:
             if args.merge:
                 command += ['--mergeOutput',
                             '--mergeScript "source grid-setup.sh worker; python \`which grid-merge\` -o %OUT -i %IN"']
-            if panda_site is not None and '--site' not in user_args and not args.nosite:
+            if panda_site is not None and '--site' not in user_args and not args.no_site:
                 command.append('--site %s' % panda_site)
             command = ' '.join(command)
             if user_args:
@@ -311,11 +317,13 @@ for dataset in datasets:
 if longds:
     sys.exit(1)
 
+print
 if args.get: 
     print "Will download these datasets:"
     for name in jobs:
         print name
     if not args.yall:
+        print
         if raw_input("Is this OK? Y/n: ") != 'Y':
             sys.exit(1) 
     commands = jobs.values()
@@ -330,6 +338,7 @@ else:
     if not args.yall:
         if raw_input("Is this OK? Y/n: ") != 'Y':
             sys.exit(1)
+        print
     print "Submitting %i jobs ..." % len(commands)
 
 processes = []
