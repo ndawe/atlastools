@@ -18,14 +18,12 @@ repo='http://linuxsoft.cern.ch/cern/slc5X/updates/x86_64/RPMS/'
 
 PYTHON_VERS_MAJOR=2.7
 PYTHON_VERS=2.7.2
-ROOT_VERS=5.32.00
-DISTRIBUTE_VERS=0.6.28
+ROOT_VERS=5.34.14
+SETUPTOOLS_VERS=2.2
 
-ROOT_VERSION_CVMFS=5.34.10-x86_64-slc5-gcc4.3
+ROOT_VERSION_CVMFS=5.34.14-x86_64-slc5-gcc4.3
 PYTHON_VERSION_CVMFS=2.6.5-x86_64-slc5-gcc43
 
-USE_PRECOMPILED_PYTHON=true
-USE_PRECOMPILED_ROOT=true
 USE_CVMFS=true
 
 # debugging grid issues
@@ -73,7 +71,7 @@ function install_python_package() {
     then
         echo "Installing ${PACKAGE}..."
         cd ${PACKAGE}
-        cp ${BASE}/distribute-${DISTRIBUTE_VERS}.tar.gz .
+        cp ${BASE}/setuptools-${SETUPTOOLS_VERS}.tar.gz .
         #echo ">>> lib dirs: ${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64"
         #echo ">>> include dirs: ${RPM_INCLUDE}"
         #python setup.py build_ext --library-dirs="${PYTHON_LIB}:${BASE}/rpmroot/usr/lib64" --include-dirs="${RPM_INCLUDE}"
@@ -177,7 +175,7 @@ clean)
         done < dependencies
         cd ${BASE}
     fi
-    rm -f ${BASE}/distribute-${DISTRIBUTE_VERS}.tar.gz
+    rm -f ${BASE}/setuptools-${SETUPTOOLS_VERS}.tar.gz
     ;;
 
 local)
@@ -204,10 +202,10 @@ local)
             download_from_github $line
         done < ${github_deps}
     fi
-    # get distribute
-    if [[ ! -e distribute-${DISTRIBUTE_VERS}.tar.gz ]]
+    # get setuptools
+    if [[ ! -e setuptools-${SETUPTOOLS_VERS}.tar.gz ]]
     then
-        wget --no-check-certificate http://pypi.python.org/packages/source/d/distribute/distribute-${DISTRIBUTE_VERS}.tar.gz
+        wget --no-check-certificate https://pypi.python.org/packages/source/s/setuptools/setuptools-${SETUPTOOLS_VERS}.tar.gz
     fi
     ;;
 
@@ -217,60 +215,38 @@ build-root-python)
 
     if [[ ! -e python ]]
     then
-        if $USE_PRECOMPILED_PYTHON
+        if ! wget http://www.python.org/ftp/python/${PYTHON_VERS}/Python-${PYTHON_VERS}.tar.bz2
         then
-            if ! wget http://hep.phys.sfu.ca/~endw/grid/python.tar.gz
-            then
-                echo "Failed to download Python"
-                exit 1
-            fi
-            tar -zxf python.tar.gz
-            rm -rf python.tar.gz
-        else
-            if ! wget http://www.python.org/ftp/python/${PYTHON_VERS}/Python-${PYTHON_VERS}.tar.bz2
-            then
-                echo "Failed to download Python"
-                exit 1
-            fi
-            tar -xjf Python-${PYTHON_VERS}.tar.bz2
-            cd Python-${PYTHON_VERS}
-            ./configure --enable-shared --prefix=${BASE}/python
-            make -j
-            make install
-            cd ..
-            rm -rf Python-${PYTHON_VERS}
-            rm -rf Python-${PYTHON_VERS}.tar.bz2
+            echo "Failed to download Python"
+            exit 1
         fi
+        tar -xjf Python-${PYTHON_VERS}.tar.bz2
+        cd Python-${PYTHON_VERS}
+        ./configure --enable-shared --prefix=${BASE}/python
+        make -j
+        make install
+        cd ..
+        rm -rf Python-${PYTHON_VERS}
+        rm -rf Python-${PYTHON_VERS}.tar.bz2
     fi
 
     setup_python
 
     if [[ ! -e root ]]
     then
-        if $USE_PRECOMPILED_ROOT
+        if ! wget ftp://root.cern.ch/root/root_v${ROOT_VERS}.source.tar.gz
         then
-            if ! wget http://hep.phys.sfu.ca/~endw/grid/root.tar.gz
-            then
-                echo "Failed to download ROOT"
-                exit 1
-            fi
-            tar -zxf root.tar.gz
-            rm -rf root.tar.gz
-        else
-            if ! wget ftp://root.cern.ch/root/root_v${ROOT_VERS}.source.tar.gz
-            then
-                echo "Failed to download ROOT"
-                exit 1
-            fi
-            gzip -dc root_v${ROOT_VERS}.source.tar.gz | tar -xf -
-            rm -rf root_v${ROOT_VERS}.source.tar.gz
-            cd root
-            ./configure --with-python-libdir=${BASE}/python/lib --with-python-incdir=${BASE}/python/include/python${PYTHON_VERS_MAJOR} \
-                        --with-dcap-libdir=/atlas/software/ATLASLocalRootBase/x86_64/gLite/current/d-cache/dcap/lib64 \
-                        --with-dcap-incdir=/atlas/software/ATLASLocalRootBase/x86_64/gLite/current/d-cache/dcap/include
-            make -j
-            cd ..
+            echo "Failed to download ROOT"
+            exit 1
         fi
+        gzip -dc root_v${ROOT_VERS}.source.tar.gz | tar -xf -
+        rm -rf root_v${ROOT_VERS}.source.tar.gz
+        cd root
+        ./configure --with-python-libdir=${BASE}/python/lib --with-python-incdir=${BASE}/python/include/python${PYTHON_VERS_MAJOR} \
+                    --with-dcap-libdir=/atlas/software/ATLASLocalRootBase/x86_64/gLite/current/d-cache/dcap/lib64 \
+                    --with-dcap-incdir=/atlas/software/ATLASLocalRootBase/x86_64/gLite/current/d-cache/dcap/include
+        make -j
+        cd ..
     fi
     
     setup_root
@@ -305,6 +281,13 @@ build)
         mkdir -p user-python/lib/python${PYTHON_VERSION}/site-packages/
         mkdir user-python/bin
     fi
+
+    # install setuptools
+    tar -zxvf ${BASE}/setuptools-${SETUPTOOLS_VERS}.tar.gz
+    cd setuptools-${SETUPTOOLS_VERS}
+    python setup.py install --user
+    cd -
+
     if [[ -f deps/dependencies ]]
     then
         cd deps
@@ -314,7 +297,6 @@ build)
             package=${tokens[0]}
             tar -zxvf ${package}.tar.gz
             cd ${package}
-            cp ${BASE}/distribute-${DISTRIBUTE_VERS}.tar.gz .
             python setup.py install --user
             cd ..
         done < dependencies
