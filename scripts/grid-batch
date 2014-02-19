@@ -33,6 +33,7 @@ from atlastools.batch import ATLASSupervisor
 from atlastools import datasets
 from atlastools.datasets import ATLASFileset
 from atlastools import utils
+from atlastools import log; log = log['grid-batch']
 import multiprocessing
 import yaml
 from configobj import ConfigObj, flatten_errors
@@ -110,7 +111,7 @@ fileset = ATLASFileset(
 )
 
 for key, value in meta.items():
-    print '%s = %s' % (key, value)
+    log.info('{0} = {1}'.format(key, value))
 
 parent_connection, child_connection = multiprocessing.Pipe()
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from goodruns.extern.argparse import ArgumentParser
+from rootpy.extern.argparse import ArgumentParser
 import multiprocessing
 
 parser = ArgumentParser(usage="%(prog)s [args] samplename1 samplename2 ...")
@@ -64,10 +64,11 @@ from contextlib import closing
 import commands
 import atexit
 import re
+from atlastools import log
+log = log['grid-submit']
 
 
 def humanize_bytes(bytes, precision=1):
-
     abbrevs = (
         (1<<50L, 'PB'),
         (1<<40L, 'TB'),
@@ -85,7 +86,6 @@ def humanize_bytes(bytes, precision=1):
 
 
 def run(command, queue):
-
     output = StringIO()
     print >> output, "executing:"
     print >> output, command
@@ -254,12 +254,14 @@ for dataset in datasets:
             panda_outDS += '_test%s' % uuid.uuid4().hex[:6]
         else:
             panda_outDS += '.v%i' % args.version
-        if len(panda_outDS) > 132:
-            panda_outDS = panda_outDS.replace('merge.NTUP_TAU.', '')
-            panda_outDS = panda_outDS.replace('AlpgenJimmy', 'AlpJim')
-        if len(panda_outDS) > 131:
-            panda_outDS = panda_outDS.replace('Pythia', 'Pyth')
-            panda_outDS = panda_outDS.replace('Jimmy', 'Jim')
+        # shorten names
+        panda_outDS = panda_outDS.replace('merge.NTUP_TAU.', '')
+        panda_outDS = panda_outDS.replace('merge.NTUP_TAUMEDIUM.', '')
+        panda_outDS = panda_outDS.replace('Alpgen', 'Alp')
+        panda_outDS = panda_outDS.replace('Jimmy', 'Jim')
+        panda_outDS = panda_outDS.replace('Pythia', 'Pyth')
+        panda_outDS = panda_outDS.replace('Herwig', 'Her')
+        panda_outDS = panda_outDS.replace('2JetsEW1JetQCD15GeVM40_min_n_tchannels', '')
         if len(panda_outDS) > 131:
             print
             print "DATASET NAME TOO LONG ({0:d} characters): {1}".format(len(panda_outDS), panda_outDS)
@@ -276,12 +278,13 @@ for dataset in datasets:
             panda_bexec = './grid-setup.sh build'
             # `which python` is needed since setuptools rewrites the shebang
             # the sheband specified in the buildjob won't be the same as in the worker job
-            panda_exec = ('source grid-setup.sh worker; '
-                          'export INPUT_DATASET_NAME=%s; '
-                          'python ./user-python/bin/grid-batch --dataset %s '
-                          '--metadata %s --student %s %s %%IN' % 
-                          (panda_inDS, dataset, args.metadata,
-                           args.student, args.student_args))
+            panda_exec = (
+                'source grid-setup.sh worker; '
+                'export INPUT_DATASET_NAME=%s; '
+                'python ./user-python/bin/grid-batch --dataset %s '
+                '--metadata %s --student %s %s %%IN' % (
+                    panda_inDS, dataset, args.metadata,
+                    args.student, args.student_args))
             if args.no_default_output:
                 if not args.outputs:
                     raise RuntimeError(
