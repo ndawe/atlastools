@@ -261,6 +261,7 @@ for dataset in datasets:
         panda_outDS = panda_outDS.replace('Jimmy', 'Jim')
         panda_outDS = panda_outDS.replace('Pythia', 'Pyth')
         panda_outDS = panda_outDS.replace('Herwig', 'Her')
+        panda_outDS = panda_outDS.replace('PowHeg', 'Pow')
         panda_outDS = panda_outDS.replace('2JetsEW1JetQCD15GeVM40_min_n_tchannels', '')
         if len(panda_outDS) > 131:
             print
