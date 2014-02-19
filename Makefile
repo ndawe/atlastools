@@ -1,24 +1,18 @@
-# simple makefile to simplify repetetive build env management tasks under posix
-
 PYTHON ?= python
 NOSETESTS ?= nosetests
-CTAGS ?= ctags
 
 all: clean inplace test
 
 clean-pyc:
-	find atlastools -name "*.pyc" | xargs rm -f
+	find atlastools -name "*.pyc" -exec rm {} \;
 
 clean-so:
-	find atlastools -name "*.so" | xargs rm -f
+	find atlastools -name "*.so" -exec rm {} \;
 
 clean-build:
 	rm -rf build
 
-clean-ctags:
-	rm -f tags
-
-clean: clean-build clean-pyc clean-so clean-ctags
+clean: clean-build clean-pyc clean-so
 
 in: inplace # just a shortcut
 inplace:
@@ -46,11 +40,6 @@ test: test-code
 
 trailing-spaces:
 	find atlastools -name "*.py" | xargs perl -pi -e 's/[ \t]*$$//'
-
-ctags:
-	# make tags for symbol based navigation in emacs and vim
-	# Install with: sudo apt-get install exuberant-ctags
-	$(CTAGS) -R *
 
 check-rst:
 	python setup.py --long-description | rst2html.py > __output.html
